@@ -7,7 +7,7 @@ import pickle
 from dump import brief_brisk as feat
 import os
 
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 tree, imagesInLeaves, nodes = {}, {}, {}
 nodeIndex = 0
 n_clusters = 16
@@ -166,11 +166,12 @@ def constructTree(node, vectors, bar):
 if __name__ == "__main__":
     
     features = []
-    rootDir = '/home/smacar/Desktop/dev/online/tree/binary_brief/data/1'
+    rootDir = 'data/1'
     fileList = sorted(os.listdir(rootDir))
 
     for imgname in fileList:
         img_path = rootDir + '/' + str(imgname)
+        print img_path
         img = images(img_path)
         # kp, des = feat(img_path)
         for i in range(len(img.des)):

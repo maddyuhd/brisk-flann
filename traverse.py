@@ -97,7 +97,7 @@ if __name__ == "__main__":
 
     imgname = str(sys.argv[1])
 
-    img_path = "/home/smacar/Desktop/dev/online/tree/binary_brief/data/2/00"+imgname+".jpg"
+    img_path = "data/2/00"+imgname+".jpg"
     img = images(img_path, 320)
 
     hello=[]
