@@ -2,9 +2,10 @@ import numpy as np
 import collections
 import os
 import sys
+import progressbar
 import tensorflow as tf
 from heapq import heappush, heappop
-from construct import vecVal, timeCal, openFile, images
+from construct import vecVal, openFile, images, tfInit
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 Lmax = 50
@@ -19,7 +20,7 @@ def hamming2(s1, s2):
     return np.count_nonzero((np.bitwise_xor(s1,s2) & r) != 0)
 
 
-def traverseTree(N, PQ, Q):
+def traverseTree(obj, N, PQ, Q):
     global imagesInLeaves, tree, nodes, length, result
 
     try:
@@ -35,45 +36,45 @@ def traverseTree(N, PQ, Q):
         C = tree[N]
 
         if len(C) > 0:
-            dim = len(vecVal(nodes[C[0]]))
-            graph = tf.Graph()
+            # dim = len(vecVal(nodes[C[0]]))
+            # graph = tf.Graph()
             # with graph.as_default():
             #     sess = tf.Session()
-            with tf.Session(graph=graph) as sess:
-                with tf.device("/cpu:0"):
+            with tf.Session(graph=obj.graph) as sess:
+            #     with tf.device("/cpu:0"):
 
-                    v1 = tf.placeholder("float", [dim])
-                    v2 = tf.placeholder("float", [dim])
-                    euclid_dist = tf.sqrt(tf.reduce_sum(tf.pow(tf.subtract(v1, v2), 2)))
-                    centroid = tf.Variable((Q))
+            #         v1 = tf.placeholder("float", [dim])
+            #         v2 = tf.placeholder("float", [dim])
+            #         euclid_dist = tf.sqrt(tf.reduce_sum(tf.pow(tf.subtract(v1, v2), 2)))
+            #         # centroid = tf.Variable((Q))
      
-                    init_op = tf.global_variables_initializer()
-                    sess.run(init_op)
+            #         init_op = tf.global_variables_initializer()
+            #         sess.run(init_op)
 
                 with tf.device("/gpu:0"):
                     data = []
                     for i in C:
                         vect = vecVal(nodes[i])
-                        distances = sess.run(euclid_dist, feed_dict={
-                            v1: vect, v2: Q})
+                        distances = sess.run(obj.euclid_dist, feed_dict={
+                            obj.v1: vect, obj.v2: Q})
                         heappush(data, (distances, i))
 
-                Cq = heappop(data)[1]
+            Cq = heappop(data)[1]
 
-                for i in data:
-                    heappush(PQ,i)
+            for i in data:
+                heappush(PQ,i)
 
-                traverseTree(Cq, PQ, Q)
+            traverseTree(obj, Cq, PQ, Q)
 
 
-def searchTree(T, Q):
+def searchTree(obj, T, Q, i):
     global Lmax, length, result
 
     length = 0 
     PQ, result = [], []
 
     # for ti in T:
-    traverseTree(T, PQ, Q)
+    traverseTree(obj, T, PQ, Q)
     # print length
     # print PQ
 
@@ -84,17 +85,8 @@ def searchTree(T, Q):
         except:
             raise
 
-        traverseTree(N, PQ, Q)
-
-    # K = 4
-    # result = []
-
-    # for i in range(K):
-        # result.append(heappop(result)[1])
-    # if len(result)>1:
-    #     return result
-    # else:
-    #     return 0
+        traverseTree(obj, N, PQ, Q)
+    pbar.update(i)
 
 
 if __name__ == "__main__":
@@ -106,22 +98,27 @@ if __name__ == "__main__":
     imgname = str(sys.argv[1])
 
     img_path = "/home/smacar/Desktop/dev/online/tree/binary_brief/data/2/00"+imgname+".jpg"
-    img = images(img_path)
+    img = images(img_path, 320)
 
-    start = timeCal()
     hello=[]
+    tfObj = tfInit(32, 16)
+    tfObj.finalVariable()
 
-    print "Total items : ", len(img.des)
+    print "[INFO] total items : ", len(img.des)
+    widgets = ["Traversing: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
+    pbar = progressbar.ProgressBar(maxval=len(img.des), widgets=widgets)
+    pbar.start()
 
-    for d in img.des:
-        # print "Q",d
-        searchTree(0,d)
-        # print len(res)
+    for i,d in enumerate(img.des):
+
+        searchTree(tfObj, 0, d, i)
+
         for _ in range(5):
             help = heappop(result)
             hello.append(help[1][0].name)
     
-    start.result("taken")
+    pbar.finish()
+
     y = collections.Counter(hello).most_common(5) 
     print "{} : {}".format(img.name,y)
 
