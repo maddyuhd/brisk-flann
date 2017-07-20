@@ -95,9 +95,10 @@ if __name__ == "__main__":
     imagesInLeaves = openFile("imagesInLeaves")
     nodes = openFile("nodes")
 
-    imgname = str(sys.argv[1])
+    # imgname = str(sys.argv[1])
 
-    img_path = "data/2/00"+imgname+".jpg"
+    # img_path = "data/2/00"+imgname+".jpg"
+    img_path = str(sys.argv[1])
     img = images(img_path, 320)
 
     hello=[]
@@ -120,5 +121,6 @@ if __name__ == "__main__":
     pbar.finish()
 
     y = collections.Counter(hello).most_common(5) 
-    print "{} : {}".format(img.name,y)
+    return y
+    # print "{} : {}".format(img.name,y)
 
