@@ -90,13 +90,14 @@ def searchTree(obj, T, Q, i):
 
 
 if __name__ == "__main__":
-    debug = False
+    inlocal = True
+    # inlocal = False
 
-    tree = openFile("tree", debug)
-    imagesInLeaves = openFile("imagesInLeaves", debug)
-    nodes = openFile("nodes", debug)
+    tree = openFile("tree", inlocal)
+    imagesInLeaves = openFile("imagesInLeaves", inlocal)
+    nodes = openFile("nodes", inlocal)
 
-    if (debug):
+    if (inlocal):
         imgname = str(sys.argv[1])
         img_path = "data/2/00"+imgname+".jpg"
     else:
@@ -108,7 +109,7 @@ if __name__ == "__main__":
     tfObj = tfInit(32, 16)
     tfObj.finalVariable()
 
-    if (debug):
+    if (inlocal):
         print "[INFO] total items : ", len(img.des)
     widgets = ["Traversing: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
     pbar = progressbar.ProgressBar(maxval=len(img.des), widgets=widgets)
@@ -125,10 +126,10 @@ if __name__ == "__main__":
     pbar.finish()
 
     y = collections.Counter(hello).most_common(5) 
-    if (debug):
+    if (inlocal):
         print "{} : {}".format(img.name,y)
     else:
         import json
         d={'id0':y[0][0],'id1':y[1][0], 'id2':y[2][0], 'id3':y[3][0]}
-        print(json.dumps(d))
+        json.dumps(d)
         # return y[0][0]
