@@ -90,6 +90,7 @@ def searchTree(obj, T, Q, i):
 
 
 if __name__ == "__main__":
+    debug = False
 
     tree = openFile("tree")
     imagesInLeaves = openFile("imagesInLeaves")
@@ -105,7 +106,8 @@ if __name__ == "__main__":
     tfObj = tfInit(32, 16)
     tfObj.finalVariable()
 
-    print "[INFO] total items : ", len(img.des)
+    if (debug):
+        print "[INFO] total items : ", len(img.des)
     widgets = ["Traversing: ", progressbar.Percentage(), " ", progressbar.Bar(), " ", progressbar.ETA()]
     pbar = progressbar.ProgressBar(maxval=len(img.des), widgets=widgets)
     pbar.start()
@@ -121,6 +123,7 @@ if __name__ == "__main__":
     pbar.finish()
 
     y = collections.Counter(hello).most_common(5) 
-    return y
+    print y[0][0]
+    # return y
     # print "{} : {}".format(img.name,y)
 
