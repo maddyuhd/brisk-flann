@@ -90,16 +90,18 @@ def searchTree(obj, T, Q, i):
 
 
 if __name__ == "__main__":
-    debug = False
+    debug = True#False
 
-    tree = openFile("tree")
-    imagesInLeaves = openFile("imagesInLeaves")
-    nodes = openFile("nodes")
+    tree = openFile("tree", True)
+    imagesInLeaves = openFile("imagesInLeaves", True)
+    nodes = openFile("nodes", True)
 
-    # imgname = str(sys.argv[1])
+    if (debug):
+        imgname = str(sys.argv[1])
+        img_path = "data/2/00"+imgname+".jpg"
+    else:
+        img_path = str(sys.argv[1])
 
-    # img_path = "data/2/00"+imgname+".jpg"
-    img_path = str(sys.argv[1])
     img = images(img_path, 320)
 
     hello=[]
@@ -123,7 +125,8 @@ if __name__ == "__main__":
     pbar.finish()
 
     y = collections.Counter(hello).most_common(5) 
-    print y[0][0]
-    # return y[0][0]
-    # print "{} : {}".format(img.name,y)
-
+    if (debug):
+        print "{} : {}".format(img.name,y)
+    else:
+        print y[0][0]
+        # return y[0][0]
