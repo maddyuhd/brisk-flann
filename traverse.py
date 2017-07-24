@@ -123,7 +123,7 @@ if __name__ == "__main__":
     pbar.finish()
 
     y = collections.Counter(hello).most_common(5) 
-    # print y[0][0]
-    return y[0][0]
+    print y[0][0]
+    # return y[0][0]
     # print "{} : {}".format(img.name,y)
 
