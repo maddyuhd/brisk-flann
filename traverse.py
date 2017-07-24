@@ -92,9 +92,9 @@ def searchTree(obj, T, Q, i):
 if __name__ == "__main__":
     debug = False
 
-    tree = openFile("tree", True)
-    imagesInLeaves = openFile("imagesInLeaves", True)
-    nodes = openFile("nodes", True)
+    tree = openFile("tree", debug)
+    imagesInLeaves = openFile("imagesInLeaves", debug)
+    nodes = openFile("nodes", debug)
 
     if (debug):
         imgname = str(sys.argv[1])
