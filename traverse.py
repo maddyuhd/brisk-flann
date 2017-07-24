@@ -90,7 +90,7 @@ def searchTree(obj, T, Q, i):
 
 
 if __name__ == "__main__":
-    debug = True#False
+    debug = False
 
     tree = openFile("tree", True)
     imagesInLeaves = openFile("imagesInLeaves", True)
