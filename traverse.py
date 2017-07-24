@@ -131,5 +131,5 @@ if __name__ == "__main__":
     else:
         import json
         d={'id0':y[0][0],'id1':y[1][0], 'id2':y[2][0], 'id3':y[3][0]}
-        json.dumps(d)
+        print json.dumps(d)
         # return y[0][0]
