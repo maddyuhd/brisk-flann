@@ -128,5 +128,7 @@ if __name__ == "__main__":
     if (debug):
         print "{} : {}".format(img.name,y)
     else:
-        print y[0][0]
+        import json
+        d={'id0':y[0][0],'id1':y[1][0], 'id2':y[2][0], 'id3':y[3][0]}
+        print(json.dumps(d))
         # return y[0][0]
