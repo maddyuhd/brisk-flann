@@ -90,8 +90,8 @@ def searchTree(obj, T, Q, i):
 
 
 if __name__ == "__main__":
-    inlocal = True
-    # inlocal = False
+    # inlocal = True
+    inlocal = False
 
     tree = openFile("tree", inlocal)
     imagesInLeaves = openFile("imagesInLeaves", inlocal)
