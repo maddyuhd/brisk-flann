@@ -119,7 +119,6 @@ if __name__ == "__main__":
     star = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
 
     for imgp in img_path:
-        print imgp
         img = images(imgp, 400, star)
 
         hello = []
