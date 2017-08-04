@@ -113,7 +113,7 @@ if __name__ == "__main__":
         # imgname = str(sys.argv[1])
         # img_path = "data/2/00"+imgname+".jpg"
     else:
-        img_path = str(sys.argv[1])
+        img_path = [str(sys.argv[1])]
 
     bar = progress("Traversing", len(img_path))
     star = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
