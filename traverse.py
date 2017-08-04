@@ -2,7 +2,6 @@ from time import time
 import numpy as np
 import collections
 import os
-# import progressbar
 import tensorflow as tf
 from heapq import heappush, heappop
 from construct import vecVal, openFile, images, tfInit, progress, inlocal
@@ -17,8 +16,6 @@ def hamming2(s1, s2):
 
     # print s1,s2
     r = (1 << np.arange(8))[:, None]
-    # print r
-    # cv2.norm(s1, s2[, normType[, mask]])
     # return np.count_nonzero((s1 & r) != (s2 & r))
     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
 
@@ -75,9 +72,7 @@ def searchTree(obj, T, Q, i):
     PQ, result = [], []
 
     # for ti in T:
-    traverseTree(obj, T, PQ, Q)
-    # print length
-    # print PQ
+    traverseTree(obj, T, PQ, Q)  # ll here
 
     while (len(PQ) > 0 and length < Lmax):
         # print "inside",length
@@ -124,6 +119,7 @@ if __name__ == "__main__":
     star = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
 
     for imgp in img_path:
+        print imgp
         img = images(imgp, 400, star)
 
         hello = []
