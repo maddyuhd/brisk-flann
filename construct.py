@@ -15,8 +15,8 @@ nodeIndex = 0
 n_clusters = 8
 max_size_lev = 500
 
-inlocal = True
-# inlocal = False
+# inlocal = True
+inlocal = False
 
 # detector = cv2.BRISK_create(50, 1, 1.0)
 
