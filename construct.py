@@ -13,8 +13,8 @@ nodes = {}  # centroid values [32] of the tree
 imagesInLeaves = {}  # leaf node
 nodeIndex = 0
 
-inlocal = True
-# inlocal = False
+# inlocal = True
+inlocal = False
 
 
 class images:
