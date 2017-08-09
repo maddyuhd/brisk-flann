@@ -6,6 +6,9 @@ import tensorflow as tf
 from heapq import heappush, heappop
 from construct import vecVal, openFile, images, tfInit, progress, inlocal
 
+import sys
+import cv2
+
 start = time()
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 Lmax = 50
@@ -13,8 +16,6 @@ Lmax = 50
 
 def hamming2(s1, s2):
     # assert len(s1) == len(s2)
-
-    # print s1,s2
     r = (1 << np.arange(8))[:, None]
     # return np.count_nonzero((s1 & r) != (s2 & r))
     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
@@ -31,23 +32,12 @@ def traverseTree(obj, N, PQ, Q):
             heappush(result, (cost, i))
             length += 1
 
-    except:
+    except KeyError:
 
         C = tree[N]
 
         if len(C) > 0:
-            # dim = len(vecVal(nodes[C[0]]))
-            # graph = tf.Graph()
-            # with graph.as_default():
-            #     sess = tf.Session()
             with tf.Session(graph=obj.graph) as sess:
-            #     with tf.device("/cpu:0"):
-            #         v1 = tf.placeholder("float", [dim])
-            #         v2 = tf.placeholder("float", [dim])
-            #         euclid_dist = tf.sqrt(tf.reduce_sum(tf.pow(tf.subtract(v1, v2), 2)))
-            #         # centroid = tf.Variable((Q))
-            #         init_op = tf.global_variables_initializer()
-            #         sess.run(init_op)
 
                 with tf.device("/gpu:0"):
                     data = []
@@ -63,6 +53,9 @@ def traverseTree(obj, N, PQ, Q):
                 heappush(PQ, i)
 
             traverseTree(obj, Cq, PQ, Q)
+
+    except Exception as e:
+        raise e
 
 
 def searchTree(obj, T, Q, i):
@@ -103,20 +96,18 @@ if __name__ == "__main__":
     imagesInLeaves = openFile("imagesInLeaves", inlocal)
     nodes = openFile("nodes", inlocal)
 
-    import sys
-    import cv2
-
     if (inlocal):
         import glob
         img_path = glob.glob("data/2/*.jpg")
-        # print img_path
         # imgname = str(sys.argv[1])
         # img_path = "data/2/00"+imgname+".jpg"
     else:
         img_path = [str(sys.argv[1])]
 
     bar = progress("Traversing", len(img_path))
-    star = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
+    # star = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
+    star = cv2.xfeatures2d.StarDetector_create(10, 30, 15)
+    # (border, threshold, ,)
 
     for imgp in img_path:
         img = images(imgp, 400, star)
@@ -127,7 +118,7 @@ if __name__ == "__main__":
         else:
             from construct import n_clusters
 
-        tfObj = tfInit(32, n_clusters)
+        tfObj = tfInit(n_clusters)
         tfObj.finalVariable()
 
     # if (inlocal):
