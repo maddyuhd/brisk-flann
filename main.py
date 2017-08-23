@@ -1,40 +1,43 @@
 import sys
 import os
-from construct import inlocal, progress, images, constructTree
-from construct import tree, imagesInLeaves, nodes, tfInit, saveFile
-
-if (inlocal):
-    n_clusters = int(sys.argv[1])
-    max_size_lev = int(sys.argv[2])
-else:
-    n_clusters = 8
-    max_size_lev = 500
+from image.pre_process import images
+from features.construct import constructTree
+from tensor_flow.pre_cluster import tfInit
+from db.pick import saveFile
 
 
-features = []
-rootDir = 'data/1'
-fileList = sorted(os.listdir(rootDir))
+inlocal = True
+# inlocal = False
 
-for imgname in fileList:
-    img_path = rootDir + '/' + str(imgname)
+if __name__ == "__main__":
 
-    img = images(img_path)
+    if (inlocal):
+        n_clusters = int(sys.argv[1])
+        max_size_lev = int(sys.argv[2])
+    else:
+        n_clusters = 8
+        max_size_lev = 500
 
-    for i in range(len(img.des)):
-        features.append((img, i))
+    features = []
+    rootDir = '../data/1'
+    fileList = sorted(os.listdir(rootDir))
 
-tfObj = tfInit(n_clusters, max_size_lev)
-tfObj.clusterVar()
-tfObj.finalVariable()
+    for imgname in fileList:
+        img_path = rootDir + '/' + str(imgname)
 
-bar = progress("Constructing", len(features))
+        img = images(img_path)
 
-constructTree(0, features, tfObj, bar)
+        for i in range(len(img.des)):
+            features.append((img, i))
 
-bar.finish()
+    tfObj = tfInit(n_clusters, max_size_lev)
+    tfObj.clusterVar()
+    tfObj.finalVariable()
 
-saveFile(tree, "tree", inlocal)
-saveFile(imagesInLeaves, "imagesInLeaves", inlocal)
-saveFile(nodes, "nodes", inlocal)
-# print("[INFO] indexed {} images, {} vectors".format(
-#     len(fileList), len(features)))
+    obj = constructTree(0, features, tfObj)
+
+    saveFile(obj.tree, "tree", inlocal)
+    saveFile(obj.imagesInLeaves, "imagesInLeaves", inlocal)
+    saveFile(obj.nodes, "nodes", inlocal)
+    # print("[INFO] indexed {} images, {} vectors".format(
+    #     len(fileList), len(features)))
