@@ -1,14 +1,15 @@
 #!/bin/sh
 
-for i in 2 4 8 16 32 64
+for i in 4 8 16 32
 do
 	for j in 16 150 500
 	do
-		r=$(($j+($j/5)))
-		python main.py $i $j
-		result=$(python traverse.py $j $r)
-		echo B- $i, L- $j, Lmax- $r, accuracy- "$result" %
 		echo "-------------------------------------"
+		echo B- $i, L- $j, Lmax- 100
+		#r=$(($j+($j/5)))
+		python main.py -n $i -l $j
+		result=$(python search.py -n $i -i batch) #j $r)
+		echo accuracy- "$result" %
 	done
 done
 

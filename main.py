@@ -1,30 +1,36 @@
-import sys
-import os
+import glob
 from image.pre_process import images
-from features.construct import constructTree
 from tensor_flow.pre_cluster import tfInit
 from db.pick import saveFile
+from features.construct import constructTree
+from features.info import inlocal  # , debug
+import argparse
 
-
-inlocal = True
-# inlocal = False
-
+ap = argparse.ArgumentParser()
 if __name__ == "__main__":
 
-    if (inlocal):
-        n_clusters = int(sys.argv[1])
-        max_size_lev = int(sys.argv[2])
+    if inlocal:
+        ap.add_argument("-n", "--branch", required=True,
+                        help="branch factor")
+        ap.add_argument("-l", "--leafSize", required=True,
+                        help="leaf size factor")
     else:
-        n_clusters = 8
-        max_size_lev = 500
+        ap.add_argument("-b", "--build", required=True,
+                        help="path to source images")
 
+    args = vars(ap.parse_args())
+
+    if (inlocal):
+        rootDir = '../data/1/*.jpg'
+        n_clusters = int(args["branch"])
+        max_size_lev = int(args["leafSize"])
+    else:
+        from features.info import n_clusters, max_size_lev
+        rootDir = args["build"]
     features = []
-    rootDir = '../data/1'
-    fileList = sorted(os.listdir(rootDir))
+    fileList = glob.glob(rootDir)
 
-    for imgname in fileList:
-        img_path = rootDir + '/' + str(imgname)
-
+    for img_path in fileList:
         img = images(img_path)
 
         for i in range(len(img.des)):
@@ -39,5 +45,13 @@ if __name__ == "__main__":
     saveFile(obj.tree, "tree", inlocal)
     saveFile(obj.imagesInLeaves, "imagesInLeaves", inlocal)
     saveFile(obj.nodes, "nodes", inlocal)
-    # print("[INFO] indexed {} images, {} vectors".format(
-    #     len(fileList), len(features)))
+    saveFile(obj.nodeIndex, "nodeIndex", inlocal)
+
+# print("[INFO] indexed {} images, {} vectors".format(
+#     len(fileList), len(features)))
+
+
+# remove try and catch
+# += 1
+# proper logging for each action
+# for i in array # not with index

@@ -1,6 +1,8 @@
 from random import sample
 import os
 import tensorflow as tf
+from info import debug
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
@@ -15,19 +17,20 @@ def vecVal(val):
 
 class constructTree():
 
-    def __init__(self, node, vectors, tfObj, debug=True):
+    def __init__(self, node, vectors, tfObj):
 
         self.tree = {}  # tree structure eg tree[0]=[1,2,3]
-        self.nodes = {}  # centroid values 32d [] of the tree
+        self.nodes = {}  # centroid val32d nodes[1]=[obj,idx]from tree
         self.imagesInLeaves = {}  # leaf node
         self.nodeIndex = 0
-        self.debug = debug
-        if self.debug:
+
+        if debug:
             from progress_bar.progress import progress
             self.bar = progress("Constructing", len(vectors))
 
         self.process(node, vectors, tfObj)
-        if self.debug:
+
+        if debug:
             self.bar.finish()
 
     def process(self, node, vectors, tfObj):
@@ -37,15 +40,13 @@ class constructTree():
             self.imagesInLeaves[node] = []
 
             for idx, v in enumerate(vectors):
-
                 self.imagesInLeaves[node].append(v)
                 v[0].updateLeaf((node, idx))
 
-                if self.debug:
-                    self.bar.update()  # fansy progress bar
+                if debug:
+                    self.bar.update()
 
         else:
-
             pickedVal = randomeCentroid(len(vectors), tfObj.n_clusters)
 
             childIDs = [[] for i in range(tfObj.n_clusters)]
@@ -53,11 +54,9 @@ class constructTree():
                             for i in pickedVal]
 
             with tf.Session(graph=tfObj.graph) as sess:
-
                 with tf.device("/gpu:0"):
                     # clustering...
                     for vector_n in range(len(vectors)):
-
                         vect = vecVal(vectors[vector_n])
 
                         distances = [sess.run(tfObj.euclid_dist, feed_dict={
@@ -71,7 +70,7 @@ class constructTree():
                         childIDs[assignments_val].append(vectors[vector_n])
 
                     for i in range(tfObj.n_clusters):
-                        self.nodeIndex = self.nodeIndex + 1
+                        self.nodeIndex += 1
                         self.nodes[self.nodeIndex] = vectors[pickedVal[i]]
                         self.tree[node].append(self.nodeIndex)
                         self.process(self.nodeIndex, childIDs[i], tfObj)

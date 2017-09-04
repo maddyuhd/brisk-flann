@@ -44,18 +44,24 @@ def briefBrisk(imagepath, val, src=True, debug=False):
     src_img = imresize(src_img, w, h, val)
 
     if src:
-        detector = cv2.BRISK_create(50, 1, 1.0)
+        detector = cv2.ORB_create()
+        # detector = cv2.BRISK_create(50, 1, 1.0) <
+
     else:
+        # detector = cv2.ORB_create(25, 1.0, 2, 10, 0, 2, 0, 10)
+        detector = cv2.ORB_create(100, 2, 9, 50, 0, 2, 0, 31, 5)
+        # detector = cv2.xfeatures2d.StarDetector_create(10, 30, 15) <
         # detector = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
-        detector = cv2.xfeatures2d.StarDetector_create(10, 30, 15)
+        # detector = cv2.BRISK_create(110, 1, 1.0)
         # (border, threshold, ,)
 
     kp = detector.detect(src_img, None)
 
-    kp, des = brief.compute(src_img, kp)
+    kp, des = detector.compute(src_img, kp)
+    # kp, des = brief.compute(src_img, kp) <
     kp_val = []
 
-    if debug:
+    if not src:
         show(kp, src_img)
 
     for point in kp:

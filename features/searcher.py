@@ -7,19 +7,19 @@ import collections
 import numpy as np
 
 import os
-
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-# Lmax = 50
 
-tree = openFile("tree", inlocal)
-imagesInLeaves = openFile("imagesInLeaves", inlocal)
-nodes = openFile("nodes", inlocal)
+
+def loaddb():
+    global tree, imagesInLeaves, nodes
+    tree = openFile("tree", inlocal)
+    imagesInLeaves = openFile("imagesInLeaves", inlocal)
+    nodes = openFile("nodes", inlocal)
 
 
 def hamming2(s1, s2):
     # assert len(s1) == len(s2)
     r = (1 << np.arange(8))[:, None]
-    # return np.count_nonzero((s1 & r) != (s2 & r))
     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
 
 
