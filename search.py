@@ -5,9 +5,6 @@ from features.searcher import searchTree, similarImages, loaddb
 from features.info import debug, inlocal
 import argparse
 
-# import os
-# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-
 ap = argparse.ArgumentParser()
 
 if inlocal:
@@ -23,12 +20,13 @@ else:
 
 args = vars(ap.parse_args())
 
-timer = True
+batchMode = False
 
-if args["name"] == "batch":
-    batchMode = True
-else:
-    batchMode = False
+if inlocal:
+    timer = True
+
+    if args["name"] == "batch":
+        batchMode = True
 
 
 def accuracy(name, y, batch):
@@ -43,13 +41,13 @@ def accuracy(name, y, batch):
         print "[RESULT] {}: {}".format(name, y)
 
 
-if timer:
+if inlocal and timer:
     from time import time
     start = time()
 
 loaddb()
 
-if timer:
+if inlocal and timer:
     newt = time()
     print "[INFO] T2l :{0:.2f} sec".format(time() - start)
 
@@ -59,7 +57,7 @@ if (inlocal):
         import glob
         global count
         count = 0
-        img_path = glob.glob("../data/full1/*.jpg")
+        img_path = glob.glob("../data/2/*.jpg")
 
     else:
         img_path = ["/home/smacar/Desktop/data/full1/0" +
@@ -103,6 +101,6 @@ if debug:
 if (debug and batchMode):
     a = count / float(len(img_path)) * 100
     print "[INFO] Final accuracy - {}%".format(a)
-    if time:
+    if inlocal and timer:
         print "[INFO] Avg time - {0:.2f} sec".format(
             (time() - newt) / float(len(img_path)))

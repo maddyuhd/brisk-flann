@@ -1,12 +1,12 @@
 import glob
 from image.pre_process import images
 from tensor_flow.pre_cluster import tfInit
-from db.pick import saveFile
-from features.construct import constructTree
-from features.info import inlocal  # , debug
+from features.construct import constructMe
+from features.info import inlocal, debug
 import argparse
 
 ap = argparse.ArgumentParser()
+
 if __name__ == "__main__":
 
     if inlocal:
@@ -21,16 +21,17 @@ if __name__ == "__main__":
     args = vars(ap.parse_args())
 
     if (inlocal):
-        rootDir = '../data/full/*.jpg'
+        rootDir = '../data/1/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
         from features.info import n_clusters, max_size_lev
         rootDir = str(args["build"]) + "*.jpg"
-    features = []
-    fileList = glob.glob(rootDir)
 
-    for img_path in fileList:
+    features = []
+    imagList = glob.glob(rootDir)
+
+    for img_path in imagList:
         img = images(img_path)
 
         for i in range(len(img.des)):
@@ -40,15 +41,13 @@ if __name__ == "__main__":
     tfObj.clusterVar()
     tfObj.finalVariable()
 
-    obj = constructTree(0, features, tfObj)
+    tree = constructMe(0, features, tfObj)
 
-    saveFile(obj.tree, "tree", inlocal)
-    saveFile(obj.imagesInLeaves, "imagesInLeaves", inlocal)
-    saveFile(obj.nodes, "nodes", inlocal)
-    saveFile(obj.nodeIndex, "nodeIndex", inlocal)
+    tree.saveDb(inlocal)
 
-# print("[INFO] indexed {} images, {} vectors".format(
-#     len(fileList), len(features)))
+if debug:
+    print("[INFO] indexed {} images, {} vectors".format(
+        len(imagList), len(features)))
 
 
 # remove try and catch

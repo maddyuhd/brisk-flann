@@ -1,4 +1,4 @@
-inlocal = True  # False
+inlocal = False
 debug = True  # False
 
 n_clusters = 8

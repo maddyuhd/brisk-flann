@@ -18,13 +18,12 @@ def loaddb():
 
 
 def hamming2(s1, s2):
-    # assert len(s1) == len(s2)
     r = (1 << np.arange(8))[:, None]
     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
 
 
 class searchTree(object):
-    result = []
+    # result = []
     Lmax = 50
 
     def __init__(self, obj, T, Q):
@@ -86,4 +85,7 @@ class similarImages():
 
     def similar_result(self, top_n=5):
         sim_imgs = collections.Counter(self.total).most_common(top_n)
+
+        for i in sim_imgs:
+            set(i[0])
         return sim_imgs

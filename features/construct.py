@@ -2,6 +2,7 @@ from random import sample
 import os
 import tensorflow as tf
 from info import debug
+from db.pick import saveFile
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -15,14 +16,15 @@ def vecVal(val):
     return obj.des[idx]
 
 
-class constructTree():
+class constructMe():
 
     def __init__(self, node, vectors, tfObj):
 
-        self.tree = {}  # tree structure eg tree[0]=[1,2,3]
-        self.nodes = {}  # centroid val32d nodes[1]=[obj,idx]from tree
-        self.imagesInLeaves = {}  # leaf node
+        self.tree = {}
+        self.nodes = {}
+        self.imagesInLeaves = {}
         self.nodeIndex = 0
+        self.disable, self.remove = set(), set()
 
         if debug:
             from progress_bar.progress import progress
@@ -74,3 +76,11 @@ class constructTree():
                         self.nodes[self.nodeIndex] = vectors[pickedVal[i]]
                         self.tree[node].append(self.nodeIndex)
                         self.process(self.nodeIndex, childIDs[i], tfObj)
+
+    def saveDb(self, inlocal):
+        saveFile(self.tree, "tree", inlocal)
+        saveFile(self.imagesInLeaves, "imagesInLeaves", inlocal)
+        saveFile(self.nodes, "nodes", inlocal)
+        saveFile(self.nodeIndex, "nodeIndex", inlocal)
+        saveFile(self.disable, "disable", inlocal)
+        saveFile(self.remove, "remove", inlocal)
