@@ -18,7 +18,7 @@ if inlocal:
                     help="image name")
 
 else:
-    ap.add_argument("-p", "--path", required=True,
+    ap.add_argument("-i", "--path", required=True,
                     help="python script.py <IMAGE_PATH>")
 
 args = vars(ap.parse_args())
@@ -91,10 +91,10 @@ for img in img_path:
 
     if not inlocal:
         import json
-        # d = dict(status=0, id0=y[0][0])
-        d = {'id0': y[0][0], 'id1': y[1][0],
-             'id2': y[2][0], 'id3': y[3][0],
-             't': str(time() - start) + "sec"}
+        d = dict(status=1, id=y[0][0])
+        # d = {'id0': y[0][0], 'id1': y[1][0],
+        #      'id2': y[2][0], 'id3': y[3][0],
+        #      't': str(time() - start) + "sec"}
         print json.dumps(d)
 
 if debug:
