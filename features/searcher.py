@@ -45,17 +45,16 @@ class searchTree(object):
     def traverseTree(self, obj, N, Q):
         global imagesInLeaves, tree, nodes
 
-        try:
-            # result.append(imagesInLeaves[N]) ?
+        if N in imagesInLeaves:
             for i in imagesInLeaves[N]:
                 val = vecVal(i)
                 cost = hamming2(val, Q)
                 heappush(self.result, (cost, i))
                 self.length += 1
 
-        except KeyError:
+        elif N in tree:
             C = tree[N]
-            # if len(C) > 0:
+
             with tf.Session(graph=obj.graph) as sess:
                 with tf.device("/gpu:0"):
                     data = []
@@ -72,8 +71,8 @@ class searchTree(object):
 
             self.traverseTree(obj, Cq, Q)
 
-        except Exception as e:
-            raise e
+        else:
+            print "bla...bla..."
 
 
 class similarImages():

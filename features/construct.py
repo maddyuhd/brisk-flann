@@ -41,7 +41,7 @@ class constructTree():
 
             for idx, v in enumerate(vectors):
                 self.imagesInLeaves[node].append(v)
-                v[0].updateLeaf((node, idx))
+                # v[0].updateLeaf((node, idx))
 
                 if debug:
                     self.bar.update()

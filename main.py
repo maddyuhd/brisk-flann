@@ -15,18 +15,18 @@ if __name__ == "__main__":
         ap.add_argument("-l", "--leafSize", required=True,
                         help="leaf size factor")
     else:
-        ap.add_argument("-b", "--build", required=True,
+        ap.add_argument("-i", "--build", required=True,
                         help="path to source images")
 
     args = vars(ap.parse_args())
 
     if (inlocal):
-        rootDir = '../data/1/*.jpg'
+        rootDir = '../data/full/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
         from features.info import n_clusters, max_size_lev
-        rootDir = args["build"]
+        rootDir = str(args["build"]) + "*.jpg"
     features = []
     fileList = glob.glob(rootDir)
 

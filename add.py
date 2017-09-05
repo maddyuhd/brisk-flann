@@ -1,18 +1,21 @@
 from features.addimg import add2Db, saveme
 from progress_bar.progress import progress
 from image.pre_process import images
+from features.info import inlocal  # , debug
 import argparse
 
 ap = argparse.ArgumentParser()
 
-ap.add_argument("-a", "--add", required=True,
-                help="add2db i/p image path")
+ap.add_argument("-i", "--add", required=True,
+                help="python script.py -i <IMAGE_PATH>")
 
 args = vars(ap.parse_args())
 
-add = args["add"]
+if inlocal:
+    img_path = "/home/smacar/Desktop/data/full/0" + args["add"] + ".jpg"
+else:
+    img_path = args["add"]
 
-img_path = "/home/smacar/Desktop/data/full/0155.jpg"
 img = images(img_path)
 
 features = []
@@ -24,4 +27,5 @@ bar = progress("adding", len(features))
 
 add2Db(0, features, bar)
 saveme()
+
 bar.finish()

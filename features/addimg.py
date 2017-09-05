@@ -30,7 +30,10 @@ def add2Db(node, vector, bar):
 
         if (len(imagesInLeaves[node]) + len(vector) >= max_size_lev):
 
-            print len(imagesInLeaves[node]) + len(vector)
+            for _ in range(len(vector)):
+                bar.update()
+            bar = None
+
             tree[node] = []
             combVal = imagesInLeaves[node] + vector
             del imagesInLeaves[node]
@@ -57,7 +60,7 @@ def add2Db(node, vector, bar):
 
                 with tf.device("/gpu:0"):
 
-                    for idx, val in enumerate(combVal):
+                    for val in (combVal):
                         vect = vecVal(val)
 
                         distances = [sess.run(euclid_dist, feed_dict={
@@ -68,11 +71,7 @@ def add2Db(node, vector, bar):
                             cluster_assignment, feed_dict={
                                 centroidPh: distances})
 
-                        childIDs[assignments_val].append(
-                            combVal[idx])
-
-            # need changes
-            # nodeIndex = 344
+                        childIDs[assignments_val].append(val)
 
             for idx, val in enumerate(childIDs):
                 nodeIndex += 1
@@ -82,12 +81,11 @@ def add2Db(node, vector, bar):
                 add2Db(nodeIndex, val, bar)
 
         else:
-            length = len(imagesInLeaves[node])
 
             for idx, v in enumerate(vector):
                 imagesInLeaves[node].append(v)
-                v[0].updateLeaf((node, length + idx))
-                bar.update()
+                if bar is not None:
+                    bar.update()
 
     else:
 

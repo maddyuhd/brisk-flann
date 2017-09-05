@@ -59,7 +59,7 @@ if (inlocal):
         import glob
         global count
         count = 0
-        img_path = glob.glob("../data/2/*.jpg")
+        img_path = glob.glob("../data/full1/*.jpg")
 
     else:
         img_path = ["/home/smacar/Desktop/data/full1/0" +
