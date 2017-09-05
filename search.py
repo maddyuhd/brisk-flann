@@ -38,7 +38,8 @@ def accuracy(name, y, batch):
                 count += 1
                 break
     else:
-        print "[RESULT] {}: {}".format(name, y)
+        if inlocal:
+            print "[RESULT] {}: {}".format(name, y)
 
 
 if inlocal and timer:
