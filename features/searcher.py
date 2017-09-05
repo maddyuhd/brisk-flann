@@ -1,7 +1,7 @@
 import tensorflow as tf
 from heapq import heappush, heappop
 from construct import vecVal
-from main import inlocal
+from features.info import inlocal
 from db.pick import openFile
 import collections
 import numpy as np
