@@ -2,12 +2,15 @@ import glob
 from image.pre_process import images
 from tensor_flow.pre_cluster import tfInit
 from features.construct import constructMe
-from features.info import inlocal, debug
+from features.info import inlocal
 import argparse
 
 ap = argparse.ArgumentParser()
 
 if __name__ == "__main__":
+
+    ap.add_argument('-d', "--debug", action="store_true",
+                    help="to debug the program", default=False)
 
     if inlocal:
         ap.add_argument("-n", "--branch", required=True,
@@ -19,6 +22,8 @@ if __name__ == "__main__":
                         help="path to source images")
 
     args = vars(ap.parse_args())
+
+    debug = args["debug"]
 
     if (inlocal):
         rootDir = '../data/1/*.jpg'
@@ -41,7 +46,7 @@ if __name__ == "__main__":
     tfObj.clusterVar()
     tfObj.finalVariable()
 
-    tree = constructMe(0, features, tfObj)
+    tree = constructMe(0, features, tfObj, debug)
 
     tree.saveDb(inlocal)
 
@@ -52,5 +57,4 @@ if debug:
 
 # remove try and catch
 # += 1
-# proper logging for each action
 # for i in array # not with index

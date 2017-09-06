@@ -1,17 +1,25 @@
 from image.pre_process import images
-from tensor_flow.pre_cluster import tfInit
+from parallel.model import myThread, loadTf
 from progress_bar.progress import progress
-from features.searcher import searchTree, similarImages, loaddb
-from features.info import debug, inlocal
+from features.searcher import analyse, loaddb
+from features.info import inlocal
 import argparse
 
 ap = argparse.ArgumentParser()
 
+ap.add_argument('-b', "--batch", action="store_true",
+                help="Process in batch the program", default=False)
+
+ap.add_argument('-t', "--time", action="store_true",
+                help="time taken to process", default=False)
+
+ap.add_argument('-d', "--debug", action="store_true",
+                help="to debug the program", default=False)
 if inlocal:
     ap.add_argument("-n", "--branch", required=True,
                     help="branch factor")
 
-    ap.add_argument("-i", "--name", required=True,
+    ap.add_argument("-i", "--name", required=False,
                     help="image name")
 
 else:
@@ -20,88 +28,114 @@ else:
 
 args = vars(ap.parse_args())
 
-batchMode = False
-
-if inlocal:
-    timer = True
-
-    if args["name"] == "batch":
-        batchMode = True
+batchMode, timer, debug = args["batch"], args["time"], args["debug"]
 
 
-def accuracy(name, y, batch):
-    if batch:
-        global count
+class cleanup():
+    def __init__(self, batchMode, inlocal, timer):
+        self.batchMode = batchMode
+        self.inlocal = inlocal
+        self.timer = timer
+        self.newt, self.start, self.count = None, None, None
+        if inlocal and timer:
+            from time import time
+            self.start = time()
+        if batchMode:
+            self.count = 0
 
-        for i in range(len(y)):
-            if name == y[i][0]:
-                count += 1
-                break
-    else:
-        if inlocal:
+    def timeTaken(self):
+        if self.timer:
+            from time import time
+            self.newt = time()
+            print "[INFO] T2l :{0:.2f} sec" \
+                .format(time() - self.start)
+
+    def final(self, total):
+            acc = self.count / float(total) * 100
+            print "[INFO] Final accuracy - {}%".format(acc)
+
+    def avgTime(self, total):
+        from time import time
+        print "[INFO] Avg time - {0:.2f} sec".format(
+            (time() - self.newt) / float(total))
+
+    def accuracy(self, name, y):
+        if self.batchMode:
+            for i in range(len(y)):
+                if name == y[i][0]:
+                    self.count += 1
+                    break
+        else:
             print "[RESULT] {}: {}".format(name, y)
 
 
-if inlocal and timer:
-    from time import time
-    start = time()
+clean = cleanup(batchMode, inlocal, timer)
 
 loaddb()
 
-if inlocal and timer:
-    newt = time()
-    print "[INFO] T2l :{0:.2f} sec".format(time() - start)
+clean.timeTaken()
 
-if (inlocal):
+if batchMode:
+    import glob
+    from features.info import n_clusters
+    img_paths = glob.glob("../data/2/*.jpg")
+
+elif inlocal:
     n_clusters = int(args["branch"])
-    if batchMode:
-        import glob
-        global count
-        count = 0
-        img_path = glob.glob("../data/2/*.jpg")
-
-    else:
-        img_path = ["/home/smacar/Desktop/data/full1/0" +
-                    args["name"] + ".jpg"]
+    img_paths = ["/home/smacar/Desktop/data/full1/0" +
+                 args["name"] + ".jpg"]
 else:
     from features.info import n_clusters
-    img_path = [args["path"]]
+    img_paths = [args["path"]]
 
 if debug:
-    bar = progress("Traversing", len(img_path))
+    bar = progress("Traversing", len(img_paths))
 
-tfObj = tfInit(n_clusters)
-tfObj.finalVariable()
 
-for img in img_path:
+def chunkData(l):
+    return [l[0:(len(l) / 2)], l[(len(l) / 2):]]
+    # for i in xrange(0, len(l), n):
+    #     yield l[i:i + n]
+
+
+loadTf(n_clusters)
+
+for img in img_paths:
     imgObj = images(img, 400, False)
-    finalObj = similarImages()
+    resultObj = analyse()
 
-    for d in imgObj.des:
-        tree_obj = searchTree(tfObj, 0, d)
-        finalObj.add_results(tree_obj.result)
+    chunks = chunkData(imgObj.des)
 
-    y = finalObj.similar_result()
+    # for idx, i in enumerate(len(chunks)):
+
+    thread1 = myThread(1, "Thread-1", chunks[0], resultObj)
+    thread2 = myThread(2, "Thread-2", chunks[1], resultObj)
+
+    thread1.start()
+    thread2.start()
+
+    thread1.join()
+    thread2.join()
+
+    # for d in imgObj.des:
+    #     tree = searchMe(tfObj, 0, d)
+    #     resultObj.update(tree.result)
+
+    y = resultObj.output()
+
     if debug:
         bar.update()
-
-    if (debug):
-        accuracy(imgObj.name, y, batchMode)
+        clean.accuracy(imgObj.name, y)
 
     if not inlocal:
         import json
         d = dict(status=1, id=y[0][0])
-        # d = {'id0': y[0][0], 'id1': y[1][0],
-        #      'id2': y[2][0], 'id3': y[3][0],
-        #      't': str(time() - start) + "sec"}
         print json.dumps(d)
 
 if debug:
     bar.finish()
 
 if (debug and batchMode):
-    a = count / float(len(img_path)) * 100
-    print "[INFO] Final accuracy - {}%".format(a)
-    if inlocal and timer:
-        print "[INFO] Avg time - {0:.2f} sec".format(
-            (time() - newt) / float(len(img_path)))
+    clean.final(len(img_paths))
+    if timer:
+        clean.avgTime(len(img_paths))

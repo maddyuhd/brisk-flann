@@ -8,13 +8,17 @@ import numpy as np
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+exitFlag = 0
 
 
 def loaddb():
-    global tree, imagesInLeaves, nodes
+    global tree, imagesInLeaves, nodes, remove
     tree = openFile("tree", inlocal)
     imagesInLeaves = openFile("imagesInLeaves", inlocal)
     nodes = openFile("nodes", inlocal)
+    remove = openFile("remove", inlocal)
+    disable = openFile("disable", inlocal)
+    remove = remove | disable
 
 
 def hamming2(s1, s2):
@@ -22,7 +26,7 @@ def hamming2(s1, s2):
     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
 
 
-class searchTree(object):
+class searchMe(object):
     # result = []
     Lmax = 50
 
@@ -74,18 +78,31 @@ class searchTree(object):
             print "bla...bla..."
 
 
-class similarImages():
+class analyse():
     def __init__(self):
-        self.total = []
+        self.c = collections.Counter()
+        # self.setVal = []
 
-    def add_results(self, result, top_n=5):
+    def update(self, result, top_n=5):
         for _ in range(top_n):
             top_result = heappop(result)
-            self.total.append(top_result[1][0].name)
+            self.c.update([top_result[1][0].name])
 
-    def similar_result(self, top_n=5):
-        sim_imgs = collections.Counter(self.total).most_common(top_n)
+    def output(self, top_n=5):
+        self.c = self.c.most_common(top_n)
 
-        for i in sim_imgs:
-            set(i[0])
-        return sim_imgs
+        # for i in self.c:
+        #     self.setVal.append(i[0])
+
+        # setVal = [x for x in self.c if x[1] >= 10 and not in remove] <
+
+        # s = [x for x in self.setVal if x not in remove]
+        return self.c
+
+
+def searchll(threadName, des, resultObj, tfObj):
+    for d in des:
+        if exitFlag:
+            threadName.exit()
+        tree = searchMe(tfObj, 0, d)
+        resultObj.update(tree.result)

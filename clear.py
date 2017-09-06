@@ -1,4 +1,5 @@
-# from db.pick import openFile
+from db.pick import openFile, saveFile
+from features.info import inlocal
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -9,16 +10,28 @@ ap.add_argument("-r", "--remove", required=False,
 ap.add_argument("-d", "--disable", required=False,
                 help="python script.py -d <IMAGE_ID>")
 
+ap.add_argument('-b', "--debug", action="store_true",
+                help="to debug the program", default=False)
+
 args = vars(ap.parse_args())
 
-delete = args["remove"]
-disable = args["disable"]
+debug, remove, disable = args["debug"], args["remove"], args["disable"]
 
 # if delete and disable:
 #     ap.error("Either remove OR disable")
 
-if args["remove"]:
-    print "remove %s" % delete
+if remove:
+    setVal = openFile("remove", inlocal)
+    setVal.add(remove)
+    saveFile(setVal, "remove", inlocal)
 
-if args["disable"]:
-    print "disable %s" % disable
+    if debug:
+        print "[INFO] removed %s" % remove
+
+if disable:
+    setVal = openFile("disable", inlocal)
+    setVal.add(disable)
+    saveFile(setVal, "disable", inlocal)
+
+    if debug:
+        print "[INFO] disabled %s" % disable

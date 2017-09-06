@@ -1,9 +1,7 @@
 from random import sample
-import os
 import tensorflow as tf
-from info import debug
 from db.pick import saveFile
-
+import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
@@ -18,21 +16,22 @@ def vecVal(val):
 
 class constructMe():
 
-    def __init__(self, node, vectors, tfObj):
+    def __init__(self, node, vectors, tfObj, debug):
 
         self.tree = {}
         self.nodes = {}
         self.imagesInLeaves = {}
         self.nodeIndex = 0
         self.disable, self.remove = set(), set()
+        self.debug = debug
 
-        if debug:
+        if self.debug:
             from progress_bar.progress import progress
             self.bar = progress("Constructing", len(vectors))
 
         self.process(node, vectors, tfObj)
 
-        if debug:
+        if self.debug:
             self.bar.finish()
 
     def process(self, node, vectors, tfObj):
@@ -43,9 +42,8 @@ class constructMe():
 
             for idx, v in enumerate(vectors):
                 self.imagesInLeaves[node].append(v)
-                # v[0].updateLeaf((node, idx))
 
-                if debug:
+                if self.debug:
                     self.bar.update()
 
         else:
@@ -57,7 +55,7 @@ class constructMe():
 
             with tf.Session(graph=tfObj.graph) as sess:
                 with tf.device("/gpu:0"):
-                    # clustering...
+
                     for vector_n in range(len(vectors)):
                         vect = vecVal(vectors[vector_n])
 
