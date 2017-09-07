@@ -1,5 +1,5 @@
 from image.pre_process import images
-from parallel.model import myThread, loadTf
+from parallel.searchmodel import llProcess  # myThread, loadTf
 from progress_bar.progress import progress
 from features.searcher import analyse, loaddb
 from features.info import inlocal
@@ -88,34 +88,17 @@ else:
     from features.info import n_clusters
     img_paths = [args["path"]]
 
+
 if debug:
     bar = progress("Traversing", len(img_paths))
 
-
-def chunkData(l):
-    return [l[0:(len(l) / 2)], l[(len(l) / 2):]]
-    # for i in xrange(0, len(l), n):
-    #     yield l[i:i + n]
-
-
-loadTf(n_clusters)
+n_threads = 3
 
 for img in img_paths:
     imgObj = images(img, 400, False)
     resultObj = analyse()
 
-    chunks = chunkData(imgObj.des)
-
-    # for idx, i in enumerate(len(chunks)):
-
-    thread1 = myThread(1, "Thread-1", chunks[0], resultObj)
-    thread2 = myThread(2, "Thread-2", chunks[1], resultObj)
-
-    thread1.start()
-    thread2.start()
-
-    thread1.join()
-    thread2.join()
+    llProcess(imgObj.des, n_threads, n_clusters, resultObj)
 
     # for d in imgObj.des:
     #     tree = searchMe(tfObj, 0, d)

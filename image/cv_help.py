@@ -37,7 +37,7 @@ def show(kp, img):
     cv2.imwrite("imagename_Brief.jpg", img)
 
 
-def briefBrisk(imagepath, val, src=True, debug=False):
+def features(imagepath, val, src=True, debug=False):
 
     src_img = cv2.imread(imagepath, 0)
     h, w = src_img.shape[:2]

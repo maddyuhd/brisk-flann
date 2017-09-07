@@ -27,7 +27,6 @@ def hamming2(s1, s2):
 
 
 class searchMe(object):
-    # result = []
     Lmax = 50
 
     def __init__(self, obj, T, Q):
@@ -104,5 +103,6 @@ def searchll(threadName, des, resultObj, tfObj):
     for d in des:
         if exitFlag:
             threadName.exit()
+
         tree = searchMe(tfObj, 0, d)
         resultObj.update(tree.result)
