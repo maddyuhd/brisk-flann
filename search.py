@@ -3,6 +3,7 @@ from parallel.searchmodel import llProcess  # myThread, loadTf
 from progress_bar.progress import progress
 from features.searcher import analyse, loaddb
 from features.info import inlocal
+from view.out import jasonDump
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -100,10 +101,6 @@ for img in img_paths:
 
     llProcess(imgObj.des, n_threads, n_clusters, resultObj)
 
-    # for d in imgObj.des:
-    #     tree = searchMe(tfObj, 0, d)
-    #     resultObj.update(tree.result)
-
     y = resultObj.output()
 
     if debug:
@@ -111,9 +108,10 @@ for img in img_paths:
         clean.accuracy(imgObj.name, y)
 
     if not inlocal:
-        import json
-        d = dict(status=1, id=y[0][0])
-        print json.dumps(d)
+        jasonDump(1, y[0][0])
+        # import json
+        # d = dict(status=1, id=y[0][0])
+        # print json.dumps(d)
 
 if debug:
     bar.finish()

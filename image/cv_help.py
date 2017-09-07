@@ -49,7 +49,7 @@ def features(imagepath, val, src=True, debug=False):
         # detector = cv2.BRISK_create(50, 1, 1.0) <
 
     else:
-        detector = cv2.ORB_create(100, 2, 9, 50, 0, 2, 0, 31, 5)
+        detector = cv2.ORB_create(100, 2, 9, 40, 0, 2, 0, 31, 5)
         # detector = cv2.xfeatures2d.StarDetector_create(10, 30, 15) <
         # detector = cv2.xfeatures2d.StarDetector_create(15, 30, 10, 8, 5)
         # detector = cv2.BRISK_create(110, 1, 1.0)
@@ -60,13 +60,13 @@ def features(imagepath, val, src=True, debug=False):
     # kp, des = brief.compute(src_img, kp) <
     kp_val = []
 
-    if not src:
-        show(kp, src_img)
+    # if not src:
+    #     show(kp, src_img)
 
-    for point in kp:
-        temp = (point.pt, point.size, point.angle,
-                point.response, point.octave, point.class_id)
-        kp_val.append(temp)
+    # for point in kp:
+    #     temp = (point.pt, point.size, point.angle,
+    #             point.response, point.octave, point.class_id)
+    #     kp_val.append(temp)
 
     return kp_val, des
     # return kp, des
