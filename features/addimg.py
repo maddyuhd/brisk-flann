@@ -1,10 +1,9 @@
 import tensorflow as tf
 from construct import vecVal, randomeCentroid
-# from image.pre_process import images
 from db.pick import openFile, saveFile
-import os
-from info import inlocal  # , debug
+from info import inlocal
 
+import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 

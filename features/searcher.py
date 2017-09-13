@@ -85,18 +85,55 @@ class analyse():
     def update(self, result, top_n=5):
         for _ in range(top_n):
             top_result = heappop(result)
-            self.c.update([top_result[1][0].name])
+            self.c.update([top_result[1][0]])
+            # self.c.update([top_result[1][0].name])
 
-    def output(self, top_n=5):
+    def output(self, qdes, top_n=5):
         self.c = self.c.most_common(top_n)
+
+        h = temp()
+        arr = []
+
+        for idx, i in enumerate(self.c):
+            i, _ = i
+            count = h.match(qdes, i.des)
+            arr.append((i.name, count))
+
+        import heapq
+        arr = heapq.nlargest(5, arr, key=lambda x: x[1])
 
         # for i in self.c:
         #     self.setVal.append(i[0])
 
         # setVal = [x for x in self.c if x[1] >= 10 and not in remove] <
 
-        # s = [x for x in self.setVal if x not in remove]
-        return self.c
+        return arr  # self.c
+
+
+class temp(object):
+    def __init__(self):
+        import cv2
+
+        index_params = dict(algorithm=6,  # FLANN_INDEX_LSH,
+                            table_number=6,  # 12
+                            key_size=12,     # 20
+                            multi_probe_level=1)  # 2
+
+        search_params = dict(checks=50)   # or pass empty dictionary
+
+        self.flann = cv2.FlannBasedMatcher(
+            index_params, search_params)
+
+    def match(self, qdes, sdes):
+        count = 0
+        matches = self.flann.knnMatch(qdes, sdes, k=2)
+        # ratio test as per Lowe's paper
+        for i, val in enumerate(matches):
+            if len(val) == 2:
+                m, n = val[0], val[1]
+                if m.distance < 0.7 * n.distance:
+                    count += 1
+        return count
 
 
 def searchll(threadName, des, resultObj, tfObj):

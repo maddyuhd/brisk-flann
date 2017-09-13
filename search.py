@@ -1,9 +1,9 @@
 from image.pre_process import images
-from parallel.searchmodel import llProcess  # myThread, loadTf
+from parallel.searchmodel import llProcess
 from progress_bar.progress import progress
 from features.searcher import analyse, loaddb
 from features.info import inlocal
-from view.out import jasonDump
+from view.out import jsonDump
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -62,10 +62,10 @@ class cleanup():
 
     def accuracy(self, name, y):
         if self.batchMode:
-            for i in range(len(y)):
-                if name == y[i][0]:
-                    self.count += 1
-                    break
+            # for i in range(len(y)):
+            if name == y[0][0]:
+                self.count += 1
+                # break
         else:
             print "[RESULT] {}: {}".format(name, y)
 
@@ -79,7 +79,7 @@ clean.timeTaken()
 if batchMode:
     import glob
     from features.info import n_clusters
-    img_paths = glob.glob("../data/2/*.jpg")
+    img_paths = glob.glob("../data/full1/*.jpg")
 
 elif inlocal:
     n_clusters = int(args["branch"])
@@ -101,17 +101,14 @@ for img in img_paths:
 
     llProcess(imgObj.des, n_threads, n_clusters, resultObj)
 
-    y = resultObj.output()
+    y = resultObj.output(imgObj.des)
 
     if debug:
         bar.update()
         clean.accuracy(imgObj.name, y)
 
     if not inlocal:
-        jasonDump(1, y[0][0])
-        # import json
-        # d = dict(status=1, id=y[0][0])
-        # print json.dumps(d)
+        jsonDump(1, y[0][0])
 
 if debug:
     bar.finish()

@@ -2,7 +2,7 @@ from features.addimg import add2Db, saveme
 from progress_bar.progress import progress
 from image.pre_process import images
 from features.info import inlocal
-from view.out import jasonDump
+from view.out import jsonDump
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -37,12 +37,15 @@ try:
 
     bar.finish()
 
+    if debug:
+        print "Success"
+
     if not inlocal:
-        jasonDump(1)
+        jsonDump(1)
 
 except Exception as e:
     if debug:
         print e
 
     if not inlocal:
-        jasonDump(0)
+        jsonDump()

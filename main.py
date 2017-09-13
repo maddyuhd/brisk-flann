@@ -1,3 +1,6 @@
+'''
+
+'''
 import glob
 from image.pre_process import images
 from tensor_flow.pre_cluster import tfInit
@@ -26,7 +29,7 @@ if __name__ == "__main__":
     debug = args["debug"]
 
     if (inlocal):
-        rootDir = '../data/1/*.jpg'
+        rootDir = '../data/full/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
