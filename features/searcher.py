@@ -102,6 +102,13 @@ class analyse():
         import heapq
         arr = heapq.nlargest(5, arr, key=lambda x: x[1])
 
+        if arr[0][1] >= 5:
+            arr = arr[0][0]
+            status = 1
+            return status, arr
+        else:
+            status = 0
+            return status, arr
         # for i in self.c:
         #     self.setVal.append(i[0])
 

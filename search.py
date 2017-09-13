@@ -63,11 +63,9 @@ class cleanup():
     def accuracy(self, name, y):
         if self.batchMode:
             # for i in range(len(y)):
-            if name == y[0][0]:
+            if name == y:  # [0][0]:
                 self.count += 1
                 # break
-        else:
-            print "[RESULT] {}: {}".format(name, y)
 
 
 clean = cleanup(batchMode, inlocal, timer)
@@ -101,14 +99,19 @@ for img in img_paths:
 
     llProcess(imgObj.des, n_threads, n_clusters, resultObj)
 
-    y = resultObj.output(imgObj.des)
+    status, id = resultObj.output(imgObj.des)
 
     if debug:
         bar.update()
-        clean.accuracy(imgObj.name, y)
+        if status:
+            print "[RESULT] {}: {}".format(imgObj.name, id)
+        else:
+            print "[RESULT] {}: {}".format(imgObj.name, id)
+
+        clean.accuracy(imgObj.name, id)
 
     if not inlocal:
-        jsonDump(1, y[0][0])
+        jsonDump(status, id)
 
 if debug:
     bar.finish()
