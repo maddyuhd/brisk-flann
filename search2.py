@@ -3,7 +3,7 @@
 # from view.progress_bar import progress
 # from features.searcher import analyse, loaddb
 from features.info import inlocal
-# from view.out import jsonDump
+from view.out import jsonDump
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -39,10 +39,8 @@ arr.append(".........")
 arr.append(str(type(data)))
 arr.append(data)
 
-print arr
-import json
+jsonDump(1, "0")
 
-json.dumps(arr)
 
 # print "convert"
 
