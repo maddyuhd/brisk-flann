@@ -39,6 +39,7 @@ arr.append(".........")
 arr.append(str(type(data)))
 arr.append(data)
 
+print arr
 import json
 
 json.dumps(arr)
