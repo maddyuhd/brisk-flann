@@ -39,7 +39,7 @@ arr.append(".........")
 arr.append(str(type(data)))
 arr.append(data)
 
-jsonDump(1, "0")
+jsonDump(1, 0)
 
 
 # print "convert"
