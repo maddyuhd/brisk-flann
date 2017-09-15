@@ -32,9 +32,17 @@ args = vars(ap.parse_args())
 # batchMode, timer, debug = args["batch"], args["time"], args["debug"]
 
 data = args["path"]
-print "........."
-print type(data)
-print data
+
+arr = []
+
+arr.append(".........")
+arr.append(str(type(data)))
+arr.append(data)
+
+import json
+
+json.dumps(arr)
+
 # print "convert"
 
 
