@@ -29,7 +29,7 @@ if __name__ == "__main__":
     debug = args["debug"]
 
     if (inlocal):
-        rootDir = '../data/full/*.jpg'
+        rootDir = '../data/1/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
@@ -50,7 +50,6 @@ if __name__ == "__main__":
     tfObj.finalVariable()
 
     tree = constructMe(0, features, tfObj, debug)
-
     tree.saveDb(inlocal)
 
 if debug:

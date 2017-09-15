@@ -1,6 +1,6 @@
 from image.pre_process import images
 from parallel.searchmodel import llProcess
-from progress_bar.progress import progress
+from view.progress_bar import progress
 from features.searcher import analyse, loaddb
 from features.info import inlocal
 from view.out import jsonDump
@@ -60,12 +60,17 @@ class cleanup():
         print "[INFO] Avg time - {0:.2f} sec".format(
             (time() - self.newt) / float(total))
 
-    def accuracy(self, name, y):
+    def accuracy(self, name, id, status):
+
         if self.batchMode:
             # for i in range(len(y)):
-            if name == y:  # [0][0]:
+            if name == id:  # [0][0]:
                 self.count += 1
                 # break
+        elif status:
+            print "[RESULT] {}: {}".format(name, id)
+        else:
+            print "[FAIL] {}: {}".format(name, id)
 
 
 clean = cleanup(batchMode, inlocal, timer)
@@ -77,7 +82,7 @@ clean.timeTaken()
 if batchMode:
     import glob
     from features.info import n_clusters
-    img_paths = glob.glob("../data/full1/*.jpg")
+    img_paths = glob.glob("../data/2/*.jpg")
 
 elif inlocal:
     n_clusters = int(args["branch"])
@@ -99,16 +104,13 @@ for img in img_paths:
 
     llProcess(imgObj.des, n_threads, n_clusters, resultObj)
 
-    status, id = resultObj.output(imgObj.des)
+    result = resultObj.output(imgObj.des)
+    status, id = result
 
     if debug:
         bar.update()
-        if status:
-            print "[RESULT] {}: {}".format(imgObj.name, id)
-        else:
-            print "[RESULT] {}: {}".format(imgObj.name, id)
 
-        clean.accuracy(imgObj.name, id)
+        clean.accuracy(imgObj.name, id, status)
 
     if not inlocal:
         jsonDump(status, id)

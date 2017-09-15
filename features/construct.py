@@ -1,8 +1,5 @@
 from random import sample
-import tensorflow as tf
 from db.pick import saveFile
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 
 def randomeCentroid(K, N):
@@ -23,10 +20,10 @@ class constructMe():
         self.imagesInLeaves = {}
         self.nodeIndex = 0
         self.disable, self.remove = set(), set()
-        self.debug = debug
 
+        self.debug = debug
         if self.debug:
-            from progress_bar.progress import progress
+            from view.progress_bar import progress
             self.bar = progress("Constructing", len(vectors))
 
         self.process(node, vectors, tfObj)
@@ -49,31 +46,13 @@ class constructMe():
         else:
             pickedVal = randomeCentroid(len(vectors), tfObj.n_clusters)
 
-            childIDs = [[] for i in range(tfObj.n_clusters)]
-            centroidsVal = [vecVal(vectors[i])
-                            for i in pickedVal]
+            childIDs = tfObj.cluster(vectors, vectors, pickedVal)
 
-            with tf.Session(graph=tfObj.graph) as sess:
-                with tf.device("/gpu:0"):
-
-                    for vector_n in range(len(vectors)):
-                        vect = vecVal(vectors[vector_n])
-
-                        distances = [sess.run(tfObj.euclid_dist, feed_dict={
-                            tfObj.v1: vect, tfObj.v2: centroid})
-                            for centroid in centroidsVal]
-
-                        assignments_val = sess.run(
-                            tfObj.cluster_assignment, feed_dict={
-                                tfObj.centroidPh: distances})
-
-                        childIDs[assignments_val].append(vectors[vector_n])
-
-                    for i in range(tfObj.n_clusters):
-                        self.nodeIndex += 1
-                        self.nodes[self.nodeIndex] = vectors[pickedVal[i]]
-                        self.tree[node].append(self.nodeIndex)
-                        self.process(self.nodeIndex, childIDs[i], tfObj)
+            for i in range(tfObj.n_clusters):
+                self.nodeIndex += 1
+                self.nodes[self.nodeIndex] = vectors[pickedVal[i]]
+                self.tree[node].append(self.nodeIndex)
+                self.process(self.nodeIndex, childIDs[i], tfObj)
 
     def saveDb(self, inlocal):
         saveFile(self.tree, "tree", inlocal)

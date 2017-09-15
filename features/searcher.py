@@ -103,18 +103,13 @@ class analyse():
         arr = heapq.nlargest(5, arr, key=lambda x: x[1])
 
         if arr[0][1] >= 5:
+            # print arr
             arr = arr[0][0]
-            status = 1
-            return status, arr
+            return (1, arr)
         else:
-            status = 0
-            return status, arr
-        # for i in self.c:
-        #     self.setVal.append(i[0])
+            return (0, arr)
 
         # setVal = [x for x in self.c if x[1] >= 10 and not in remove] <
-
-        return arr  # self.c
 
 
 class temp(object):

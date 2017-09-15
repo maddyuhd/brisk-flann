@@ -1,4 +1,6 @@
 import tensorflow as tf
+from features.construct import vecVal
+
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
@@ -27,3 +29,26 @@ class tfInit:
     def finalVariable(self):
         with tf.Session(graph=self.graph) as sess:
             sess.run(self.init_op)
+
+    def cluster(self, totalVal, sampleVal, pickedIdx):
+        with tf.Session(graph=self.graph) as sess:
+            childIDs = [[] for i in range(self.n_clusters)]
+            centroidsVal = [vecVal(sampleVal[i])
+                            for i in pickedIdx]
+            with tf.device("/gpu:0"):
+
+                for val in (totalVal):
+                    vect = vecVal(val)
+
+                    distances = [sess.run(self.euclid_dist,
+                                 feed_dict={self.v1: vect,
+                                            self.v2: centroid})
+                                 for centroid in centroidsVal]
+
+                    assignments_val = sess.run(
+                        self.cluster_assignment,
+                        feed_dict={self.centroidPh: distances})
+
+                    childIDs[assignments_val].append(val)
+
+        return childIDs
