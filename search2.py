@@ -32,13 +32,14 @@ args = vars(ap.parse_args())
 # batchMode, timer, debug = args["batch"], args["time"], args["debug"]
 
 data = args["path"]
-print data
+print "-------------"
 print type(data)
+print data
 print "convert"
 
-import numpy as np
-data = np.asarray(data)
-print type(data)
+# import numpy as np
+# data = np.asarray(data)
+# print type(data)
 
 # a = a.astype("uint8")
 # print type(a)
