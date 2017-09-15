@@ -31,7 +31,7 @@ args = vars(ap.parse_args())
 
 # batchMode, timer, debug = args["batch"], args["time"], args["debug"]
 
-data = args["name"]
+data = args["path"]
 print data
 print type(data)
 print "convert"
