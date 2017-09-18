@@ -1,9 +1,9 @@
-# from image.pre_process import images
 # from parallel.searchmodel import llProcess
 # from view.progress_bar import progress
 # from features.searcher import analyse, loaddb
 from features.info import inlocal
 from view.out import jsonDump
+import numpy as np
 import argparse
 
 ap = argparse.ArgumentParser()
@@ -14,8 +14,8 @@ ap = argparse.ArgumentParser()
 # ap.add_argument('-t', "--time", action="store_true",
 #                 help="time taken to process", default=False)
 
-# ap.add_argument('-d', "--debug", action="store_true",
-#                 help="to debug the program", default=False)
+ap.add_argument('-d', "--debug", action="store_true",
+                help="to debug the program", default=False)
 if inlocal:
     ap.add_argument("-n", "--branch", required=True,
                     help="branch factor")
@@ -24,26 +24,39 @@ if inlocal:
                     help="image name")
 
 else:
-    ap.add_argument("-i", "--path", required=True,
+    ap.add_argument("-i", "--data", required=True,
                     help="python script.py <IMAGE_PATH>")
 
 args = vars(ap.parse_args())
 
-# batchMode, timer, debug = args["batch"], args["time"], args["debug"]
+# batchMode, timer = args["batch"], args["time"]
+debug = args["debug"]
 
-data = args["path"]
+try:
+    data = args["data"]
+    data = eval("[" + data[1:-2].replace("\;", "],[") + "]]")
+    data = np.asarray(data)
+    data = data.astype("uint8")
 
-arr = []
+    arr = []
+    arr.append(data)
+    arr.append(type(data))
+    arr.append(data.dtype)
+    arr.append(data.shape)
 
-arr.append(".........")
-arr.append(str(type(data)))
-arr.append(data)
+    # import os
+    # os.chmod("/home/ubuntu/brisk-flann/output.txt", 0o777)
+    with open("/home/ubuntu/brisk-flann/output.txt", "w+") as text_file:
+        text_file.write(arr)
 
-with open("Output.txt", "w") as text_file:
-    text_file.write(": %s" % arr)
+    jsonDump(1, 0)
 
-jsonDump(1, 0)
+except Exception as e:
 
+    if debug:
+        print e
+
+    jsonDump(0)
 
 # print "convert"
 
