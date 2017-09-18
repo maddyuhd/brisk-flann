@@ -39,6 +39,9 @@ arr.append(".........")
 arr.append(str(type(data)))
 arr.append(data)
 
+with open("Output.txt", "w") as text_file:
+    text_file.write(": %s" % arr)
+
 jsonDump(1, 0)
 
 
