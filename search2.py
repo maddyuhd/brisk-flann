@@ -1,6 +1,6 @@
-# from parallel.searchmodel import llProcess
+from parallel.searchmodel import llProcess
 # from view.progress_bar import progress
-# from features.searcher import analyse, loaddb
+from features.searcher import analyse, loaddb
 from features.info import inlocal
 from view.out import jsonDump
 import numpy as np
@@ -32,42 +32,38 @@ args = vars(ap.parse_args())
 # batchMode, timer = args["batch"], args["time"]
 debug = args["debug"]
 
+if inlocal:
+    n_clusters = args["branch"]
+else:
+    from features.info import n_clusters
+
 try:
     data = args["data"]
     data = eval("[" + data[1:-2].replace("\;", "],[") + "]]")
     data = np.asarray(data)
     data = data.astype("uint8")
 
-    arr = []
-    arr.append(data)
-    arr.append(type(data))
-    arr.append(data.dtype)
-    arr.append(data.shape)
+    loaddb()
+    n_threads = 3
 
-    # import os
-    # os.chmod("/home/ubuntu/brisk-flann/output.txt", 0o777)
-    with open("/home/ubuntu/brisk-flann/output.txt", "w+") as text_file:
-        text_file.write(arr)
+    resultObj = analyse()
 
-    jsonDump(1, 0)
+    llProcess(data, n_threads, n_clusters, resultObj)
+
+    result = resultObj.output(data)
+    status, id = result
+
+    if not inlocal:
+        jsonDump(status, id)
+
 
 except Exception as e:
 
     if debug:
         print e
 
-    jsonDump(0)
-
-# print "convert"
-
-
-# import numpy as np
-# data = np.asarray(data)
-# print type(data)
-
-# a = a.astype("uint8")
-# print type(a)
-# print a.dtype
+    if not inlocal:
+        jsonDump(0)
 
 # class cleanup():
 #     def __init__(self, batchMode, inlocal, timer):
