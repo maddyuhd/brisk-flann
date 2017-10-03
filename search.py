@@ -90,7 +90,7 @@ clean.timeTaken()
 if batchMode:
     import glob
     from features.info import n_clusters
-    img_paths = glob.glob("../data/full1/*.jpg")
+    img_paths = glob.glob("/home/smacar/Desktop/data/full1/*.jpg")
 
 elif inlocal:
     n_clusters = int(args["branch"])

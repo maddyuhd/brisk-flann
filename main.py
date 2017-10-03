@@ -56,7 +56,7 @@ debug = args["debug"]
 
 try:
     if (inlocal):
-        rootDir = '../data/full/*.jpg'
+        rootDir = '/home/smacar/Desktop/data/full/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
