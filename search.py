@@ -1,79 +1,87 @@
 from image.pre_process import images
-from parallel.searchmodel import llProcess
+from parallel.model import llProcess
 from view.progress_bar import progress
 from features.searcher import analyse, loaddb
-from features.info import inlocal
+from features.info import inlocal, success, failed
 from view.out import jsonDump
+from log.log import logInfo
 import argparse
 
 ap = argparse.ArgumentParser()
 
-ap.add_argument('-b', "--batch", action="store_true",
-                help="Process in batch the program", default=False)
+ap.add_argument('-b', "--batch", action="store_true", help="search in batch",
+                default=False)
+ap.add_argument('-d', "--debug", action="store_true", help="debug",
+                default=False)
 
-ap.add_argument('-t', "--time", action="store_true",
-                help="time taken to process", default=False)
-
-ap.add_argument('-d', "--debug", action="store_true",
-                help="to debug the program", default=False)
 if inlocal:
-    ap.add_argument("-n", "--branch", required=True,
-                    help="branch factor")
-
-    ap.add_argument("-i", "--name", required=False,
-                    help="image name")
+    ap.add_argument("-n", "--branch", required=True, help="branch factor")
+    ap.add_argument("-i", "--name", required=False, help="image name")
 
 else:
-    ap.add_argument("-i", "--path", required=True,
-                    help="python script.py <IMAGE_PATH>")
+    ap.add_argument("-i", "--path", required=True, help="image path")
 
 args = vars(ap.parse_args())
 
-batchMode, timer, debug = args["batch"], args["time"], args["debug"]
+batchMode, debug = args["batch"], args["debug"]
 
 
 class cleanup():
-    def __init__(self, batchMode, inlocal, timer):
+    def __init__(self, batchMode, inlocal, debug):
         self.batchMode = batchMode
         self.inlocal = inlocal
-        self.timer = timer
+        self.debug = debug
         self.newt, self.start, self.count = None, None, None
-        if inlocal and timer:
+        self.recall, self.precision = None, None
+
+        if inlocal and debug:
             from time import time
-            self.start = time()
+            self.time = time
+            self.start = self.time()
         if batchMode:
-            self.count = 0
+            self.count, self.recall, self.precision = 0, 0, 0
 
     def timeTaken(self):
-        if self.timer:
-            from time import time
-            self.newt = time()
+        if self.debug:
+            self.newt = self.time()
             print "[INFO] T2l :{0:.2f} sec" \
-                .format(time() - self.start)
+                .format(self.time() - self.start)
 
     def final(self, total):
-            acc = self.count / float(total) * 100
-            print "[INFO] Final accuracy - {}%".format(acc)
+        if self.batchMode:
+            self.recall = self.recall / float(total) * 100
+            self.precision = self.precision / float(total) * 100
+            f1 = (2 * self.precision * self.recall) / float(
+                self.precision + self.recall)
+            print "[INFO] Recall    : {}".format(self.recall)
+            print "[INFO] Precision : {}".format(self.precision)
+            print "[INFO] F1 score : {}".format(f1)
+        # acc = self.count / float(total) * 100
+        # print "[INFO] Final accuracy - {}%".format(acc)
 
     def avgTime(self, total):
-        from time import time
-        print "[INFO] Avg time - {0:.2f} sec".format(
-            (time() - self.newt) / float(total))
+        if self.debug and self.batchMode:
+            print "[INFO] Avg time - {0:.2f} sec".format(
+                (self.time() - self.newt) / float(total))
 
     def accuracy(self, name, id, status):
 
         if self.batchMode:
-            # for i in range(len(y)):
-            if name == id:  # [0][0]:
-                self.count += 1
-                # break
+            if status:
+                self.recall += 1
+                if name == id:
+                    self.precision += 1
+            # # for i in range(len(y)):
+            # if name == id:  # [0][0]:
+            #     self.count += 1
+            #     # break
         elif status:
             print "[RESULT] {}: {}".format(name, id)
         else:
             print "[FAIL] {}: {}".format(name, id)
 
 
-clean = cleanup(batchMode, inlocal, timer)
+clean = cleanup(batchMode, inlocal, debug)
 
 loaddb()
 
@@ -82,7 +90,7 @@ clean.timeTaken()
 if batchMode:
     import glob
     from features.info import n_clusters
-    img_paths = glob.glob("../data/2/*.jpg")
+    img_paths = glob.glob("../data/full1/*.jpg")
 
 elif inlocal:
     n_clusters = int(args["branch"])
@@ -93,32 +101,38 @@ else:
     img_paths = [args["path"]]
 
 
-if debug:
-    bar = progress("Traversing", len(img_paths))
-
 n_threads = 3
+log = logInfo("[SEARCH]")
 
-for img in img_paths:
-    imgObj = images(img, 400, False)
-    resultObj = analyse()
+try:
+    if debug:
+        bar = progress("Traversing", len(img_paths))
 
-    llProcess(imgObj.des, n_threads, n_clusters, resultObj)
+    for img in img_paths:
+        imgObj = images(img, 400, False)
+        resultObj = analyse()
 
-    result = resultObj.output(imgObj.des)
-    status, id = result
+        llProcess(imgObj.des, n_threads, n_clusters, resultObj)
+
+        result = resultObj.output(imgObj.des)
+        status, id = result
+
+        if debug:
+            bar.update()
+            clean.accuracy(imgObj.name, id, status)
+
+        if not inlocal:
+            jsonDump(status, id)
+            log.dump(1, success)
 
     if debug:
-        bar.update()
-
-        clean.accuracy(imgObj.name, id, status)
-
-    if not inlocal:
-        jsonDump(status, id)
-
-if debug:
-    bar.finish()
-
-if (debug and batchMode):
-    clean.final(len(img_paths))
-    if timer:
+        bar.finish()
+        clean.final(len(img_paths))
         clean.avgTime(len(img_paths))
+
+except Exception as e:
+    if debug:
+        print e
+    if not inlocal:
+        jsonDump()
+        log.dump(3, failed + str(e))

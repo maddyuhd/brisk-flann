@@ -8,7 +8,7 @@ import cv2
 
 
 def imresize(image, w, h, val=320):
-    ar = w / float(h)
+    # ar = w / float(h)
     if h > w:
         ar = w / float(h)
         newH = val
@@ -18,9 +18,8 @@ def imresize(image, w, h, val=320):
         newW = val
         newH = int(newW * ar)
     else:
-        newH = val
-        newW = val
-
+        newH = newW = val
+        # newW = val
     img = cv2.resize(image, (newW, newH))
     return img
 

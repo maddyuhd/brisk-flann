@@ -21,17 +21,17 @@ class constructMe():
         self.nodeIndex = 0
         self.disable, self.remove = set(), set()
 
-        self.debug = debug
-        if self.debug:
+        self._debug = debug
+        if self._debug:
             from view.progress_bar import progress
-            self.bar = progress("Constructing", len(vectors))
+            self._bar = progress("Constructing", len(vectors))
 
-        self.process(node, vectors, tfObj)
+        self._process(node, vectors, tfObj)
 
-        if self.debug:
-            self.bar.finish()
+        if self._debug:
+            self._bar.finish()
 
-    def process(self, node, vectors, tfObj):
+    def _process(self, node, vectors, tfObj):
         self.tree[node] = []
 
         if (len(vectors) < tfObj.max_size_lev):
@@ -40,8 +40,8 @@ class constructMe():
             for idx, v in enumerate(vectors):
                 self.imagesInLeaves[node].append(v)
 
-                if self.debug:
-                    self.bar.update()
+                if self._debug:
+                    self._bar.update()
 
         else:
             pickedVal = randomeCentroid(len(vectors), tfObj.n_clusters)
@@ -52,7 +52,7 @@ class constructMe():
                 self.nodeIndex += 1
                 self.nodes[self.nodeIndex] = vectors[pickedVal[i]]
                 self.tree[node].append(self.nodeIndex)
-                self.process(self.nodeIndex, childIDs[i], tfObj)
+                self._process(self.nodeIndex, childIDs[i], tfObj)
 
     def saveDb(self, inlocal):
         saveFile(self.tree, "tree", inlocal)

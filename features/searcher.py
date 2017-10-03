@@ -4,7 +4,8 @@ from construct import vecVal
 from features.info import inlocal
 from db.pick import openFile
 import collections
-import numpy as np
+from image.numpy import hamming2
+# import numpy as np
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -21,9 +22,9 @@ def loaddb():
     remove = remove | disable
 
 
-def hamming2(s1, s2):
-    r = (1 << np.arange(8))[:, None]
-    return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
+# def hamming2(s1, s2):
+#     r = (1 << np.arange(8))[:, None]
+#     return np.count_nonzero((np.bitwise_xor(s1, s2) & r) != 0)
 
 
 class searchMe(object):
