@@ -19,8 +19,8 @@ class myThread (threading.Thread):
 
 def loadTf(n_clusters):
     global tfObj
-    tfObj = tfInit(n_clusters)
-    tfObj.finalVariable()
+    tfObj = tfInit(n_clusters, inSearchMode=True)
+    # tfObj.finalVariable()
 
 
 def llProcess(data, n_threads, n_clusters, result):

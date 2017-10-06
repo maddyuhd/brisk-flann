@@ -28,18 +28,16 @@ Change Log:
     --- cleanup tf.cluser
 '''
 import glob
+import argparse
 from image.pre_process import images
 from tensor_flow.pre_cluster import tfInit
 from features.construct import constructMe
 from features.info import inlocal, success, failed
 from log.log import logInfo
-import argparse
 
 log = logInfo("[RECONSTRUCT]")
 
 ap = argparse.ArgumentParser()
-
-# if __name__ == "__main__":
 
 ap.add_argument('-d', "--debug", action="store_true", help="Debug",
                 default=False)
@@ -55,8 +53,8 @@ args = vars(ap.parse_args())
 debug = args["debug"]
 
 try:
-    if (inlocal):
-        rootDir = '/home/smacar/Desktop/data/full/*.jpg'
+    if inlocal:
+        rootDir = '/home/smacar/Desktop/data/10/*.jpg'
         n_clusters = int(args["branch"])
         max_size_lev = int(args["leafSize"])
     else:
@@ -72,8 +70,6 @@ try:
             features.append((img, i))
 
     tfObj = tfInit(n_clusters, max_size_lev)
-    tfObj.clusterVar()
-    tfObj.finalVariable()
 
     tree = constructMe(0, features, tfObj, debug)
     tree.saveDb(inlocal)

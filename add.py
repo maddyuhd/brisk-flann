@@ -44,8 +44,8 @@ try:
         features.append((img, i))
 
     tfObj = tfInit(n_clusters, max_size_lev)
-    tfObj.clusterVar()
-    tfObj.finalVariable()
+    # tfObj.clusterVar()
+    # tfObj.finalVariable()
 
     add2Db(0, features, tfObj, debug)
 

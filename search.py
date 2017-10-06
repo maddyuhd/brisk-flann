@@ -1,8 +1,8 @@
 from image.pre_process import images
 from parallel.model import llProcess
-from view.progress_bar import progress
 from features.searcher import analyse, loaddb
 from features.info import inlocal, success, failed
+from view.progress_bar import progress
 from view.out import jsonDump
 from log.log import logInfo
 import argparse
@@ -52,9 +52,9 @@ class cleanup():
             self.recall = self.recall / float(total) * 100
             self.precision = self.precision / float(total) * 100
             f1 = (2 * self.precision * self.recall) / float(
-                self.precision + self.recall)
-            print "[INFO] Recall    : {}".format(self.recall)
-            print "[INFO] Precision : {}".format(self.precision)
+                self.precision + self.recall) / 100
+            print "[INFO] Recall    : {} %".format(self.recall)
+            print "[INFO] Precision : {} %".format(self.precision)
             print "[INFO] F1 score : {}".format(f1)
         # acc = self.count / float(total) * 100
         # print "[INFO] Final accuracy - {}%".format(acc)
@@ -64,21 +64,21 @@ class cleanup():
             print "[INFO] Avg time - {0:.2f} sec".format(
                 (self.time() - self.newt) / float(total))
 
-    def accuracy(self, name, id, status):
+    def accuracy(self, name, imgId, status):
 
         if self.batchMode:
             if status:
                 self.recall += 1
-                if name == id:
+                if name == imgId:
                     self.precision += 1
             # # for i in range(len(y)):
             # if name == id:  # [0][0]:
             #     self.count += 1
             #     # break
         elif status:
-            print "[RESULT] {}: {}".format(name, id)
+            print "[RESULT] {}: {}".format(name, imgId)
         else:
-            print "[FAIL] {}: {}".format(name, id)
+            print "[FAIL] {}: {}".format(name, imgId)
 
 
 clean = cleanup(batchMode, inlocal, debug)
@@ -87,21 +87,25 @@ loaddb()
 
 clean.timeTaken()
 
-if batchMode:
-    import glob
-    from features.info import n_clusters
-    img_paths = glob.glob("/home/smacar/Desktop/data/full1/*.jpg")
-
-elif inlocal:
+if inlocal:
     n_clusters = int(args["branch"])
-    img_paths = ["/home/smacar/Desktop/data/full1/0" +
-                 args["name"] + ".jpg"]
+    if batchMode:
+        import glob
+        # from features.info import n_clusters
+        img_paths = glob.glob("/home/smacar/Desktop/data/10s/*.jpg")
+
+    else:
+        # n_clusters = int(args["branch"])
+        img_paths = ["/home/smacar/Desktop/data/full1/0" +
+                     args["name"] + ".jpg"]
+
 else:
     from features.info import n_clusters
     img_paths = [args["path"]]
 
 
-n_threads = 3
+N_THREADS = 3
+
 log = logInfo("[SEARCH]")
 
 try:
@@ -112,17 +116,17 @@ try:
         imgObj = images(img, 400, False)
         resultObj = analyse()
 
-        llProcess(imgObj.des, n_threads, n_clusters, resultObj)
+        llProcess(imgObj.des, N_THREADS, n_clusters, resultObj)
 
         result = resultObj.output(imgObj.des)
-        status, id = result
+        status, imgId = result
 
         if debug:
             bar.update()
-            clean.accuracy(imgObj.name, id, status)
+            clean.accuracy(imgObj.name, imgId, status)
 
         if not inlocal:
-            jsonDump(status, id)
+            jsonDump(status, imgId)
             log.dump(1, success)
 
     if debug:

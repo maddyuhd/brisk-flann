@@ -1,11 +1,10 @@
 import tensorflow as tf
+import collections
 from heapq import heappush, heappop
 from construct import vecVal
 from features.info import inlocal
 from db.pick import openFile
-import collections
-from image.numpy import hamming2
-# import numpy as np
+from image.numpy_help import hamming2
 
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -89,6 +88,9 @@ class analyse():
             self.c.update([top_result[1][0]])
             # self.c.update([top_result[1][0].name])
 
+    """
+    Clean me
+    """
     def output(self, qdes, top_n=5):
         self.c = self.c.most_common(top_n)
 
@@ -112,7 +114,9 @@ class analyse():
 
         # setVal = [x for x in self.c if x[1] >= 10 and not in remove] <
 
-
+"""
+Clean me
+"""
 class temp(object):
     def __init__(self):
         import cv2
@@ -140,9 +144,9 @@ class temp(object):
 
 
 def searchll(threadName, des, resultObj, tfObj):
-    for d in des:
+    for vec in des:
         if exitFlag:
             threadName.exit()
 
-        tree = searchMe(tfObj, 0, d)
+        tree = searchMe(tfObj, 0, vec)
         resultObj.update(tree.result)
