@@ -5,22 +5,24 @@ To Do:
     -- Features
         - Replace
         - Duplicate
-    -- Hdf5 implement
-    -- Redis implement
     -- Threading
         - add.py
         - construct.py
     -- Tweak parameter
     -- Bug - del tree[node]
     -- CleanUp
-        -search2.py
         -search.py
-        -searcher.py
-    -- Indexer Class :)
 
 Change Log:
+-- V2.0.0
+    -- CleanUp
+        --searcher.py
+        --search2.py
+    --- Indexer Class
+    # -- Hdf5 implement
+    # -- Redis implement
+    # -- Handle multiple users (add.py)
 -- V1.2.0
-    -- Handle multiple users (add.py)
     --- Logging
     --- cleanup clear.py
 -- V1.1.2
@@ -29,9 +31,9 @@ Change Log:
 '''
 import glob
 import argparse
-from image.pre_process import images
 from tensor_flow.pre_cluster import tfInit
-from features.construct import constructMe
+from tree.construct import constructMe
+from tree.indexer import index
 from features.info import inlocal, success, failed
 from log.log import logInfo
 
@@ -61,13 +63,9 @@ try:
         from features.info import n_clusters, max_size_lev
         rootDir = str(args["build"]) + "*.jpg"
 
-    features = []
     imagList = glob.glob(rootDir)
 
-    for img_path in imagList:
-        img = images(img_path)
-        for i in range(len(img.des)):
-            features.append((img, i))
+    features = index(imagList)
 
     tfObj = tfInit(n_clusters, max_size_lev)
 

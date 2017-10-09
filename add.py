@@ -1,10 +1,9 @@
-# from features.addimg import add2Db, saveme
-from features.addimg import add2Db
-from tensor_flow.pre_cluster import tfInit
-from image.pre_process import images
-from features.info import inlocal, success, failed
-from view.out import jsonDump
 import argparse
+from features.addimg import add2Db
+from features.info import inlocal, success, failed
+from tensor_flow.pre_cluster import tfInit
+from tree.indexer import index
+from view.out import jsonDump
 from log.log import logInfo
 
 log = logInfo("[ADD]")
@@ -29,23 +28,16 @@ debug = args["debug"]
 
 try:
     if inlocal:
-        img_path = "/home/smacar/Desktop/data/full/0" + args["add"] + ".jpg"
+        img_path = ["/home/smacar/Desktop/data/full/0" + args["add"] + ".jpg"]
         n_clusters, max_size_lev = int(args["branch"]), int(args["leafSize"])
 
     else:
         from features.info import n_clusters, max_size_lev
-        img_path = args["add"]
+        img_path = [args["add"]]
 
-    img = images(img_path)
-
-    features = []
-
-    for i in range(len(img.des)):
-        features.append((img, i))
+    features = index(img_path)
 
     tfObj = tfInit(n_clusters, max_size_lev)
-    # tfObj.clusterVar()
-    # tfObj.finalVariable()
 
     add2Db(0, features, tfObj, debug)
 
