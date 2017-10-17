@@ -27,9 +27,8 @@ class constructMe():
             self._bar.finish()
 
     def _process(self, node, vectors, tfObj):
-        self._tree[node] = []
 
-        if (len(vectors) < tfObj.max_size_lev):
+        if len(vectors) < tfObj.max_size_lev:
             self._imagesInLeaves[node] = []
 
             for idx, v in enumerate(vectors):
@@ -39,6 +38,8 @@ class constructMe():
                     self._bar.update()
 
         else:
+            self._tree[node] = []
+
             pickedVal = randomeCentroid(len(vectors), tfObj.n_clusters)
 
             childIDs = tfObj.cluster(vectors, vectors, pickedVal)
