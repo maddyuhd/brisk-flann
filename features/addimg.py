@@ -1,6 +1,6 @@
 # from construct import vecVal, randomeCentroid
-from construct import randomeCentroid
-from view.progress__bar import progress
+from tree.construct import randomeCentroid
+from view.progress_bar import progress
 from db.pick import openFile, saveFile
 from info import inlocal
 

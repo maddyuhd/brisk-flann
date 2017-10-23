@@ -4,10 +4,10 @@ Indexer for handling Data structure
 
 from image.pre_process import images
 
-def index(imagList):
+def index(imgList):
     features = []
 
-    for img_path in imagList:
+    for img_path in imgList:
         img = images(img_path)
 
         for i in range(len(img.des)):

@@ -20,7 +20,7 @@ if inlocal:
 
 else:
     ap.add_argument("-i", "--path", required=False, help="image path")
-    # ap.add_argument("-f", "--feat", required=False, help="features 2D array")
+    ap.add_argument("-f", "--feat", required=False, help="features 2D array")
 
 args = vars(ap.parse_args())
 
@@ -87,44 +87,60 @@ loaddb()
 
 clean.timeTaken()
 
+datas = []
+N_THREADS = 3
+
+log = logInfo("[SEARCH]")
+
 if inlocal:
     n_clusters = int(args["branch"])
     if batchMode:
         import glob
         img_paths = glob.glob("/home/smacar/Desktop/data/10s/*.jpg")
 
+        for img in img_paths:
+            imgObj = images(img, resize=400, src=False)
+            datas.append(imgObj)
+
     else:
         img_paths = ["/home/smacar/Desktop/data/full1/0" +
                      args["name"] + ".jpg"]
 
+        for img in img_paths:
+            imgObj = images(img, resize=400, src=False)
+            datas.append(imgObj)
+
 else:
     from features.info import n_clusters
-    # imgPath, imgFeat = args["path"], args["feat"]
-    # if imgPath:
-    img_paths = [args["path"]]
-    # elif imgFeat:
-    #     from tree.numpy_help import featureCleanup
-    #     data = [featureCleanup(imgFeat)]
+    img_paths, imgFeat = [args["path"]], args["feat"]
 
+    if img_paths:
+        for img in img_paths:
+            imgObj = images(img, resize=400, src=False)
+            datas.append(imgObj)
 
-N_THREADS = 3
+    elif imgFeat:
+        from tree.numpy_help import featureCleanup
+        datas.append(featureCleanup(imgFeat))
 
-log = logInfo("[SEARCH]")
 
 try:
     if debug:
-        bar = progress("Traversing", len(img_paths))
+        bar = progress("Traversing", len(datas))
 
-    for img in img_paths:
-        imgObj = images(img, resize=400, src=False)
+    for data in datas:
+        if img_paths:
+            name = data.name
+            data = data.des
 
-        result = llProcess(imgObj.des, N_THREADS, n_clusters)
+        result = llProcess(data, N_THREADS, n_clusters)
 
         status, imgId = result
 
         if debug:
             bar.update()
-            clean.accuracy(imgObj.name, imgId, status)
+            if img_paths:
+                clean.accuracy(name, imgId, status)
 
         if not inlocal:
             jsonDump(status, imgId)
@@ -132,7 +148,7 @@ try:
 
     if debug:
         bar.finish()
-        clean.final(len(img_paths))
+        clean.final(len(datas))
 
 except Exception as e:
     if debug:

@@ -15,7 +15,7 @@ To Do:
 
 Change Log:
 -- V2.0.0
-    -- CleanUp
+    --- CleanUp
         --searcher.py
         --search2.py
     --- Indexer Class
