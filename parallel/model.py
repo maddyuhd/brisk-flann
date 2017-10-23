@@ -1,8 +1,8 @@
 import threading
 from tree.searcher import searchll
-from tree.numpy_help import chunkify
-from tensor_flow.pre_cluster import tfInit
+# from tree.numpy_help import chunkify
 from tree.temp import analyse
+from tensor_flow.pre_cluster import tfInit
 
 class myThread(threading.Thread):
     def __init__(self, threadID, name, data):
@@ -21,6 +21,8 @@ def loadTf(n_clusters):
     global tfObj
     tfObj = tfInit(n_clusters, inSearchMode=True)
 
+def chunkify(lst, n):
+    return [lst[i::n] for i in xrange(n)]
 
 def llProcess(data, n_threads, n_clusters):
     global resultObj

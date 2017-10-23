@@ -11,6 +11,3 @@ def featureCleanup(data):
     data = np.asarray(data)
     data = data.astype("uint8")
     return data
-
-def chunkify(lst, n):
-    return [lst[i::n] for i in xrange(n)]
