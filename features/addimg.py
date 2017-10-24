@@ -1,4 +1,3 @@
-# from construct import vecVal, randomeCentroid
 from tree.construct import randomeCentroid
 from view.progress_bar import progress
 from db.pick import openFile, saveFile

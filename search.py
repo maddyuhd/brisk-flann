@@ -80,51 +80,50 @@ class cleanup():
         else:
             print "[FAIL] {}: {}".format(name, imgId)
 
+try:
+    clean = cleanup(batchMode, inlocal, debug)
 
-clean = cleanup(batchMode, inlocal, debug)
+    loaddb()
 
-loaddb()
+    clean.timeTaken()
 
-clean.timeTaken()
+    datas = []
+    N_THREADS = 3
 
-datas = []
-N_THREADS = 3
+    log = logInfo("[SEARCH]")
 
-log = logInfo("[SEARCH]")
+    if inlocal:
+        n_clusters = int(args["branch"])
+        if batchMode:
+            import glob
+            img_paths = glob.glob("/home/smacar/Desktop/data/10s/*.jpg")
 
-if inlocal:
-    n_clusters = int(args["branch"])
-    if batchMode:
-        import glob
-        img_paths = glob.glob("/home/smacar/Desktop/data/10s/*.jpg")
+            for img in img_paths:
+                imgObj = images(img, resize=400, src=False)
+                datas.append(imgObj)
 
-        for img in img_paths:
-            imgObj = images(img, resize=400, src=False)
-            datas.append(imgObj)
+        else:
+            img_paths = ["/home/smacar/Desktop/data/full1/0" +
+                        args["name"] + ".jpg"]
+
+            for img in img_paths:
+                imgObj = images(img, resize=400, src=False)
+                datas.append(imgObj)
 
     else:
-        img_paths = ["/home/smacar/Desktop/data/full1/0" +
-                     args["name"] + ".jpg"]
+        from features.info import n_clusters
+        img_paths, imgFeat = [args["path"]], args["feat"]
 
-        for img in img_paths:
-            imgObj = images(img, resize=400, src=False)
-            datas.append(imgObj)
+        if img_paths:
+            for img in img_paths:
+                imgObj = images(img, resize=400, src=False)
+                datas.append(imgObj)
 
-else:
-    from features.info import n_clusters
-    img_paths, imgFeat = [args["path"]], args["feat"]
-
-    if img_paths:
-        for img in img_paths:
-            imgObj = images(img, resize=400, src=False)
-            datas.append(imgObj)
-
-    elif imgFeat:
-        from tree.numpy_help import featureCleanup
-        datas.append(featureCleanup(imgFeat))
+        elif imgFeat:
+            from tree.numpy_help import featureCleanup
+            datas.append(featureCleanup(imgFeat))
 
 
-try:
     if debug:
         bar = progress("Traversing", len(datas))
 

@@ -24,24 +24,24 @@ if remove and disable:
 
 if remove:
     action = "[REMOVE]"
-    id = remove
+    id_ = remove
     file_name = "remove"
 if disable:
     action = "[DISABLE]"
-    id = disable
+    id_ = disable
     file_name = "disable"
 
 log = logInfo(action)
 
 try:
     val = openFile(file_name, inlocal)
-    val.add(id)
+    val.add(id_)
     saveFile(val, file_name, inlocal)
 
     log.dump(1, success)
 
     if debug:
-        print "[INFO] {}d : {}".format(file_name, id)
+        print "[INFO] {}d : {}".format(file_name, id_)
 
 except Exception as e:
 
@@ -50,39 +50,3 @@ except Exception as e:
 
     if not inlocal:
         log.dump(3, failed + str(e))
-
-
-# if remove:
-#     action = "[REMOVE]"
-#     log = logInfo(action)
-
-#     try:
-#         setVal = openFile("remove", inlocal)
-#         setVal.add(remove)
-#         saveFile(setVal, "remove", inlocal)
-
-#         log.dump(1, "SUCCESS")
-
-#         if debug:
-#             print "[INFO] removed %s" % remove
-
-#     except Exception as e:
-#         log.dump(3, e)
-
-
-# if disable:
-#     action = "[DISABLE]"
-#     log = logInfo(action)
-
-#     try:
-#         setVal = openFile("disable", inlocal)
-#         setVal.add(disable)
-#         saveFile(setVal, "disable", inlocal)
-
-#         log.dump(1, "SUCCESS")
-
-#         if debug:
-#             print "[INFO] disabled %s" % disable
-
-#     except Exception as e:
-#         log.dump(3, e)
