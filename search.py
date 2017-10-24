@@ -35,7 +35,8 @@ class cleanup():
         self.newt, self.start, self.count = None, None, None
         self.recall, self.precision = None, None
 
-        if inlocal and debug:
+        if debug:
+        # if inlocal and debug:
             from time import time
             self.time = time
             self.start = self.time()
