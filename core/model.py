@@ -1,8 +1,7 @@
 import threading
 from tree.searcher import searchll
-# from tree.numpy_help import chunkify
 from tree.temp import analyse
-from tensor_flow.pre_cluster import tfInit
+from core.pre_cluster import tfInit
 
 class myThread(threading.Thread):
     def __init__(self, threadID, name, data):

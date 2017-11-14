@@ -1,8 +1,9 @@
 from heapq import heappush, heappop
 from features.info import inlocal
-from db.pick import openFile
 from tree.numpy_help import hamming2
 from tree.indexer import getVal
+from db.pick import openFile
+from db.in_memory import Memory
 exitFlag = 0
 
 
@@ -36,6 +37,7 @@ class searchMe(object):
 
     def _traverseTree(self, obj, N, Q):
         global imagesInLeaves, tree, nodes
+        # global nodes
 
         if N in imagesInLeaves:
             for i in imagesInLeaves[N]:
@@ -56,8 +58,6 @@ class searchMe(object):
 
             self._traverseTree(obj, Cq, Q)
 
-        else:
-            print "bla...bla..."
 
 
 def searchll(threadName, des, resultObj, tfObj):

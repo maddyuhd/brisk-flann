@@ -1,10 +1,18 @@
-from heapq import heappop
 import collections
+from heapq import heappop
+
+from db.in_memory import Manage_del_dis
+ignore_obj = Manage_del_dis()
+
+from db.in_memory import ImagetoMemory
+obj = ImagetoMemory(pipeline=False)
+
+from db.hdf5 import FileStructure
+hdf5_test_obj = FileStructure(mode="r")
 
 class analyse():
     def __init__(self):
         self.c = collections.Counter()
-        # self.setVal = []
 
     def update(self, result, top_n=5):
         for _ in range(top_n):
@@ -23,7 +31,11 @@ class analyse():
 
         for idx, i in enumerate(self.c):
             i, _ = i
+            # data = obj.entire_des(name=i)
+            # data = hdf5_test_obj.test1(i)
+            # count = h.match(qdes, data)
             count = h.match(qdes, i.des)
+            # arr.append((count, i))
             arr.append((count, i.name))
 
         # import heapq
@@ -31,12 +43,14 @@ class analyse():
 
         arr = max(arr)
 
-        if arr[0] >= 5:  # arr[0][1] >= 5:
-            # print arr
-            # arr = arr[0][0]
-            return (1, arr[1])
-        else:
-            return (0, arr)
+        ignore = ignore_obj.stuff_to_ignore()
+        if arr[1] not in ignore:  # <------------------------remove it from the top candidate
+            if arr[0] >= 5:
+                return (1, arr[1])
+            else:
+                return (0, _)
+        else:  # <-------------------------------------------remove me
+            return (0, _)
 
         # setVal = [x for x in self.c if x[1] >= 10 and not in remove] <
 

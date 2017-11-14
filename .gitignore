@@ -4,3 +4,5 @@
 *.pckl
 *.log
 *.json
+/.cache
+*.hdf5
