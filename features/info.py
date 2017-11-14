@@ -17,9 +17,10 @@ Change Log:
 -- V2.0.0
     # -- Redis implement
     # -- Handle multiple users (add.py)
+    --- added test framework
     ---handle disable and delete (with redis)
     --- CleanUp
-        -- temp.py
+        -- temp files
         --search.py
         --searcher.py
         --search2.py

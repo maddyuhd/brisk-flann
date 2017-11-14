@@ -1,12 +1,11 @@
-from features.addimg import add2Db
 from core.pre_cluster import tfInit
-from tree.indexer import Indexer
 from db.hdf5 import FileStructure
 from image.pre_process import images
+from tree.indexer import Indexer
+from features.addimg import add2Db
 
 
 HDF5 = FileStructure()
-
 img_path = ["/home/smacar/Desktop/data/full/0001.jpg"]
 vectors = Indexer(img_path, images, HDF5)
 

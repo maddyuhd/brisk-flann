@@ -37,7 +37,7 @@ try:
     if responds:
         log.dump(1, success)
     else:
-        log.dump(1, success + "undo")
+        log.dump(1, success + "UNDO")
 
 except Exception as e:
     log.dump(3, failed + str(e))
