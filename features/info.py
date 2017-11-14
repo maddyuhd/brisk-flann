@@ -1,8 +1,8 @@
 '''
 To Do:
-    -- Features
-        - Replace
-        - Duplicate
+    # -- Features
+    #     - Replace
+    #     - Duplicate
     -- Threading
         - add.py
         - construct.py
@@ -10,7 +10,6 @@ To Do:
     -- Final check - better method?
     -- Tweak parameter
     -- Bug - del tree[node]
-    -- Deprecate Image input
     -- Implement Test frame-work
 
 Change Log:
@@ -18,6 +17,7 @@ Change Log:
     # -- Redis implement
     # -- Handle multiple users (add.py)
     --- added test framework
+    -- Deprecate Image input
     ---handle disable and delete (with redis)
     --- CleanUp
         -- temp files
@@ -41,7 +41,6 @@ n_clusters = 8
 max_size_lev = 500
 
 logPath = "/var/www/html/system/storage/logs/engine.log"
-# logPath = "/home/smacar/Desktop/work/brisk-flann/log/log.log"
 
 success = "0 "
 failed = "1 "
