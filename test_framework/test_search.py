@@ -3,7 +3,7 @@ from core.model import llProcess
 from tree.searcher import loaddb
 
 import glob
-img_paths = glob.glob("/home/smacar/Desktop/data/full1/*.jpg")
+img_paths = glob.glob("/home/smacar/Desktop/data/100s/*.jpg")
 # img_paths = ["/home/smacar/Desktop/data/100s/0001.jpg"]
 # print "[PASSED] {}: {}".format(name, imgId)
 # print "[FAIL] {}: {}".format(name, imgId)
